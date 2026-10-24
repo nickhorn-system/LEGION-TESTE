@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LEGION — Key System</title>
+  <meta name="description" content="Gere sua key LEGION em segundos. Ativação por HWID, validade imediata e validação pela API oficial.">
+  <meta name="theme-color" content="#06070b">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="site">
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+  <div class="bg-noise" aria-hidden="true"></div>
+
+  <div class="maintenance" id="maintenanceBanner" hidden>
+    <span class="dot"></span> SISTEMA EM MANUTENÇÃO — GERAÇÃO DE KEYS PAUSADA
+  </div>
+
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="/" aria-label="LEGION — início">
+        <svg class="logo-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="lgHeader" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#ff2d46"/><stop offset="1" stop-color="#ff7a3d"/>
+            </linearGradient>
+          </defs>
+          <path d="M24 4.5 41 11v12.4C41 33.9 33.9 41.8 24 45.5 14.1 41.8 7 33.9 7 23.4V11L24 4.5Z" fill="url(#lgHeader)" fill-opacity=".14" stroke="url(#lgHeader)" stroke-width="1.8"/>
+          <path d="M17.8 15.2v14.4h12.4" stroke="#fff" stroke-width="3.2"/>
+        </svg>
+        <span class="brand-text">
+          <span class="brand-name" data-brand>LEGION</span>
+          <span class="brand-sub">KEY SYSTEM</span>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="Navegação principal">
+        <a href="#gerador">Gerador</a>
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#api">API</a>
+      </nav>
+
+      <div class="header-actions">
+        <span class="status-pill"><span class="dot"></span> ONLINE</span>
+        <a class="btn btn-ghost btn-sm" href="/admin">Painel</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero wrap" id="gerador">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-line"></span>Protocolo de acesso // 001</p>
+        <h1>Sua key.<br><span class="accent">Seu acesso.</span></h1>
+        <p class="lead">Gere sua key <span data-brand>LEGION</span> em segundos. Vinculação por HWID, validade imediata e verificação pela API oficial — sem intermediário, sem enrolação.</p>
+
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat__value" id="statTotal">0</span>
+            <span class="hero-stat__label">Keys geradas</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat__value" id="statActive">0</span>
+            <span class="hero-stat__label">Ativas agora</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat__value" id="statToday">0</span>
+            <span class="hero-stat__label">Hoje</span>
+          </div>
+        </div>
+
+        <ul class="hero-points">
+          <li><span class="tick"></span>Ativação instantânea</li>
+          <li><span class="tick"></span><span id="heroDuration">Validade de 30 dias</span></li>
+          <li><span class="tick"></span>API aberta</li>
+        </ul>
+      </div>
+
+      <div class="gen-card">
+        <div class="gen-card__bar">
+          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="gen-file">legion_keygen.exe</span>
+          <svg class="gen-lock" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M8 10V7.5a4 4 0 0 1 8 0V10" stroke="currentColor" stroke-width="1.6"/>
+          </svg>
+        </div>
+
+        <div class="gen-card__body">
+          <div class="field-row">
+            <span class="field-label">Modelo do gerador</span>
+            <span class="chip">3 modelos</span>
+          </div>
+
+          <div class="model-grid" id="modelGrid" role="tablist" aria-label="Modelos de key">
+            <button class="model-card is-active" type="button" data-model="private" role="tab" aria-selected="true">
+              <span class="model-card__top">
+                <span class="model-card__dot"></span>
+                <span class="model-card__name">PRIVATE</span>
+              </span>
+              <span class="model-card__count" data-model-count="private">0 keys</span>
+            </button>
+            <button class="model-card" type="button" data-model="headtrick" role="tab" aria-selected="false">
+              <span class="model-card__top">
+                <span class="model-card__dot"></span>
+                <span class="model-card__name">HEADTRICK</span>
+              </span>
+              <span class="model-card__count" data-model-count="headtrick">0 keys</span>
+            </button>
+            <button class="model-card" type="button" data-model="internal" role="tab" aria-selected="false">
+              <span class="model-card__top">
+                <span class="model-card__dot"></span>
+                <span class="model-card__name">INTERNAL</span>
+              </span>
+              <span class="model-card__count" data-model-count="internal">0 keys</span>
+            </button>
+          </div>
+
+          <div class="field-row">
+            <span class="field-label">Sua nova key</span>
+            <span class="chip chip--model" id="modelChip">PRIVATE</span>
+          </div>
+
+          <div class="key-display is-empty" id="keyDisplay">
+            <span class="key-text" id="keyText">PRIVATE-XXXX-XXXX</span>
+            <button class="icon-btn key-copy" id="copyKeyBtn" type="button" title="Copiar key" aria-label="Copiar key" disabled>
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M15 5.5V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h.5" stroke="currentColor" stroke-width="1.6"/></svg>
+            </button>
+          </div>
+
+          <div class="gen-msg" id="genMsg" role="status" aria-live="polite"></div>
+
+          <button class="btn btn-primary btn-generate" id="generateBtn" type="button">
+            <span id="generateBtnLabel">Gerar minha key</span>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-5-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+
+          <div class="gen-meta">
+            <span>Validade <b id="metaDuration">30 dias</b></span>
+            <span>Cooldown <b id="metaCooldown">120s</b></span>
+          </div>
+
+          <div class="cooldown" id="cooldownWrap" hidden>
+            <div class="cooldown__track"><div class="cooldown__bar" id="cooldownBar"></div></div>
+            <div class="cooldown__text" id="cooldownText"></div>
+          </div>
+        </div>
+
+        <div class="gen-card__foot">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 20 6.5v5.2c0 4.4-3.3 8-8 9.3-4.7-1.3-8-4.9-8-9.3V6.5L12 3Z" stroke="currentColor" stroke-width="1.5"/><path d="m8.8 12.2 2.2 2.2 4.2-4.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          A key é vinculada ao seu HWID no primeiro uso.
+        </div>
+      </div>
+    </section>
+
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker__track">
+        <span>LEGION KEY SYSTEM</span><span class="sep">◆</span>
+        <span>ACESSO DIRETO</span><span class="sep">◆</span>
+        <span>HWID BOUND</span><span class="sep">◆</span>
+        <span>API VALIDATION</span><span class="sep">◆</span>
+        <span>KEYS ILIMITADAS</span><span class="sep">◆</span>
+        <span>LEGION KEY SYSTEM</span><span class="sep">◆</span>
+        <span>ACESSO DIRETO</span><span class="sep">◆</span>
+        <span>HWID BOUND</span><span class="sep">◆</span>
+        <span>API VALIDATION</span><span class="sep">◆</span>
+        <span>KEYS ILIMITADAS</span><span class="sep">◆</span>
+      </div>
+    </div>
+
+    <section class="section wrap" id="como-funciona">
+      <div class="section-head">
+        <p class="eyebrow"><span class="eyebrow-line"></span>Como funciona // 002</p>
+        <h2>Três passos. Zero fricção.</h2>
+        <p class="section-lead">Do clique ao acesso em menos de um minuto. O sistema cuida do resto.</p>
+      </div>
+
+      <div class="steps">
+        <article class="step">
+          <span class="step__num">01</span>
+          <div class="step__icon">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.5 9.5a4.5 4.5 0 1 1-3.2 3.2L4 20v-3h3v-3h3l3.5-3.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="16.5" cy="7.5" r="1.4" fill="currentColor"/></svg>
+          </div>
+          <h3>Gere a key</h3>
+          <p>Clique em gerar e receba uma key única no formato <code data-brand>LEGION</code>-XXXX-XXXX-XXXX-XXXX.</p>
+        </article>
+
+        <article class="step">
+          <span class="step__num">02</span>
+          <div class="step__icon">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 20 6.5v5.2c0 4.4-3.3 8-8 9.3-4.7-1.3-8-4.9-8-9.3V6.5L12 3Z" stroke="currentColor" stroke-width="1.5"/><path d="m8.8 12.2 2.2 2.2 4.2-4.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Ative no loader</h3>
+          <p>Cole a key no campo de licença. No primeiro uso ela é vinculada ao seu HWID automaticamente.</p>
+        </article>
+
+        <article class="step">
+          <span class="step__num">03</span>
+          <div class="step__icon">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13 2 4.5 13.5H11L9.8 22 19 10h-6.2L13 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Acesso liberado</h3>
+          <p>Pronto. A key fica válida pelo período contratado e pode ser verificada pela API a qualquer momento.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section wrap api-section" id="api">
+      <div class="api-copy">
+        <p class="eyebrow"><span class="eyebrow-line"></span>Integração // API</p>
+        <h2>Valide em qualquer loader.</h2>
+        <p class="section-lead">Endpoint único, resposta em JSON e CORS liberado. Integre em minutos, não em dias.</p>
+
+        <ul class="check-list">
+          <li><span class="tick"></span>Resposta JSON em tempo real</li>
+          <li><span class="tick"></span>Vinculação automática de HWID</li>
+          <li><span class="tick"></span>CORS aberto para qualquer origem</li>
+        </ul>
+
+        <div class="endpoint-box">
+          <span class="endpoint-label">Endpoint de validação</span>
+          <div class="endpoint-row">
+            <code id="endpointText">/api/validate</code>
+            <button class="icon-btn" id="copyEndpointBtn" type="button" title="Copiar endpoint" aria-label="Copiar endpoint">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M15 5.5V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h.5" stroke="currentColor" stroke-width="1.6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="terminal">
+        <div class="terminal__bar">
+          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="terminal__file">validate.sh</span>
+          <span class="terminal__badge">POST</span>
+        </div>
+        <pre class="terminal__body"><code id="apiSample"></code></pre>
+        <div class="terminal__foot">
+          <span><span class="terminal__dot"></span> resposta 200 · application/json</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <a class="brand brand--footer" href="/">
+        <svg class="logo-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="lgFooter" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#ff2d46"/><stop offset="1" stop-color="#ff7a3d"/>
+            </linearGradient>
+          </defs>
+          <path d="M24 4.5 41 11v12.4C41 33.9 33.9 41.8 24 45.5 14.1 41.8 7 33.9 7 23.4V11L24 4.5Z" fill="url(#lgFooter)" fill-opacity=".14" stroke="url(#lgFooter)" stroke-width="1.8"/>
+          <path d="M17.8 15.2v14.4h12.4" stroke="#fff" stroke-width="3.2"/>
+        </svg>
+        <span class="brand-text">
+          <span class="brand-name" data-brand>LEGION</span>
+          <span class="brand-sub">KEY SYSTEM</span>
+        </span>
+      </a>
+      <p class="footer-note">Sistema operacional. Acesso monitorado.</p>
+      <p class="footer-copy">© <span id="year">2026</span> <span data-brand>LEGION</span>. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <div class="toast-root" id="toastRoot" aria-live="polite"></div>
+
+  <script src="/config.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -23,12 +23,14 @@
       apiBase: '',
       publicUrl: '',
       models: FALLBACK_MODELS,
+      durations: [1, 7, 30],
       cooldownSeconds: 120,
       defaultDurationDays: 30,
       maintenance: false,
       version: '1.0.0',
     },
     model: 'private',
+    duration: 30,
     busy: false,
     cooldown: { until: 0, total: 0, timer: null, scramble: null },
   };
@@ -56,6 +58,7 @@
     year: $('#year'),
     modelGrid: $('#modelGrid'),
     modelChip: $('#modelChip'),
+    durationGrid: $('#durationGrid'),
   };
 
   /* ---------------------------------------------------------------- utils */
@@ -112,6 +115,41 @@
 
   function currentModel() {
     return modelById(state.model);
+  }
+
+  function durations() {
+    const list = Array.isArray(state.cfg.durations)
+      ? state.cfg.durations.map((value) => Number(value)).filter((value) => value > 0)
+      : [];
+    return list.length ? list : [1, 7, 30];
+  }
+
+  function durationListLabel() {
+    const list = durations();
+    const last = list[list.length - 1];
+    const prefix = list.slice(0, -1).join(', ');
+    const unit = last === 1 ? 'dia' : 'dias';
+    return prefix ? `${prefix} ou ${last} ${unit}` : `${last} ${unit}`;
+  }
+
+  function selectDuration(days, options = {}) {
+    const value = Number(days);
+    if (!durations().includes(value)) return false;
+
+    state.duration = value;
+    $$('.duration-card').forEach((card) => {
+      const active = Number(card.dataset.duration) === value;
+      card.classList.toggle('is-active', active);
+      card.setAttribute('aria-checked', active ? 'true' : 'false');
+    });
+
+    if (els.metaDuration) {
+      els.metaDuration.textContent = humanDuration(value);
+    }
+    if (!options.silent) {
+      showMessage(`Tempo de ${humanDuration(value)} selecionado. Gere sua key.`, '');
+    }
+    return true;
   }
 
   /* ---------------------------------------------------------------- toast */
@@ -216,9 +254,6 @@
     });
     document.title = `${state.cfg.brand} — Key System`;
 
-    if (els.metaDuration) {
-      els.metaDuration.textContent = humanDuration(state.cfg.defaultDurationDays);
-    }
     if (els.metaCooldown) {
       els.metaCooldown.textContent =
         state.cfg.cooldownSeconds > 0 ? `${state.cfg.cooldownSeconds}s` : 'sem espera';
@@ -226,15 +261,18 @@
 
     const heroDuration = $('#heroDuration');
     if (heroDuration) {
-      heroDuration.textContent =
-        state.cfg.defaultDurationDays > 0
-          ? `Validade de ${state.cfg.defaultDurationDays} dias`
-          : 'Validade vitalícia';
+      heroDuration.textContent = `Validade de ${durationListLabel()}`;
     }
 
     renderModelAvailability();
     const active = models().find((model) => model.id === state.model);
     if (active && active.enabled !== false) selectModel(active.id, { silent: true });
+
+    const durationOptions = durations();
+    const preferredDuration = durationOptions.includes(Number(state.cfg.defaultDurationDays))
+      ? Number(state.cfg.defaultDurationDays)
+      : durationOptions[durationOptions.length - 1];
+    selectDuration(preferredDuration, { silent: true });
 
     const endpoint = validationUrl();
     if (els.endpointText) els.endpointText.textContent = endpoint;
@@ -482,7 +520,7 @@
       const response = await fetch(apiUrl('/api/generate'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ source: 'web', model: state.model }),
+        body: JSON.stringify({ source: 'web', model: state.model, durationDays: state.duration }),
       });
       const data = await response.json().catch(() => ({}));
 
@@ -506,6 +544,7 @@
       }
 
       const generated = modelById(data.model || state.model);
+      if (data.durationDays) selectDuration(data.durationDays, { silent: true });
       window.setTimeout(() => revealKey(data.key), 420);
       showMessage(
         data.durationDays > 0
@@ -542,6 +581,14 @@
         const card = event.target.closest('[data-model]');
         if (!card || card.disabled) return;
         selectModel(card.dataset.model);
+      });
+    }
+
+    if (els.durationGrid) {
+      els.durationGrid.addEventListener('click', (event) => {
+        const card = event.target.closest('[data-duration]');
+        if (!card) return;
+        selectDuration(card.dataset.duration);
       });
     }
 

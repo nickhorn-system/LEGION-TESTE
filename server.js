@@ -59,6 +59,7 @@ const MODELS = [
   },
 ];
 const MODEL_MAP = new Map(MODELS.map((model) => [model.id, model]));
+const PUBLIC_DURATIONS = [1, 7, 30];
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -563,6 +564,7 @@ function publicConfig() {
     publicUrl: cfg.publicUrl,
     apiBase: cfg.apiBase,
     models: modelsConfig(),
+    durations: PUBLIC_DURATIONS,
     cooldownSeconds: cfg.cooldownSeconds,
     dailyLimit: cfg.dailyLimit,
     defaultDurationDays: cfg.defaultDurationDays,
@@ -579,6 +581,7 @@ function clientConfig() {
     apiBase: trimSlash(cfg.apiBase),
     publicUrl: trimSlash(cfg.publicUrl),
     models: modelsConfig(),
+    durations: PUBLIC_DURATIONS,
     cooldownSeconds: cfg.cooldownSeconds,
     defaultDurationDays: cfg.defaultDurationDays,
     maintenance: cfg.maintenance,
@@ -636,6 +639,23 @@ async function handleGenerate(req, res) {
 
   const cfg = db.config;
   const now = Date.now();
+  const requestedDuration = body.durationDays;
+  let durationDays = cfg.defaultDurationDays;
+
+  if (requestedDuration !== undefined && requestedDuration !== null && requestedDuration !== '') {
+    const parsedDuration = Number.parseInt(requestedDuration, 10);
+    if (!PUBLIC_DURATIONS.includes(parsedDuration)) {
+      return sendJson(res, 400, {
+        ok: false,
+        code: 'invalid_duration',
+        message: 'Duração inválida. Escolha 1, 7 ou 30 dias.',
+      });
+    }
+    durationDays = parsedDuration;
+  } else if (!PUBLIC_DURATIONS.includes(durationDays)) {
+    durationDays = 30;
+  }
+
   const mine = activeWebKeysByIp(ip);
   const lastCreated = mine.reduce((acc, item) => Math.max(acc, Date.parse(item.createdAt) || 0), 0);
 
@@ -671,7 +691,7 @@ async function handleGenerate(req, res) {
     createdAt: nowIso(),
     createdBy: 'web',
     ip,
-    durationDays: cfg.defaultDurationDays,
+    durationDays,
     plan: 'standard',
     note: '',
     revoked: false,
@@ -683,7 +703,7 @@ async function handleGenerate(req, res) {
   };
   db.keys.push(item);
   bumpMetric('generated');
-  addLog('generate', { ip, key, detail: `${model.prefix} · ${cfg.defaultDurationDays}d` });
+  addLog('generate', { ip, key, detail: `${model.prefix} · ${durationDays}d` });
   await persist();
 
   const remainingToday = cfg.dailyLimit > 0 ? Math.max(0, cfg.dailyLimit - createdToday - 1) : null;

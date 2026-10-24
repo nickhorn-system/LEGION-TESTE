@@ -1,9 +1,9 @@
 # LEGION — Key System
 
-Gerador de keys com **3 modelos**, painel administrativo e API de validação. Zero dependências: roda em qualquer lugar com Node.js 18+.
+Gerador de keys com **3 modelos** e duração de **1, 7 ou 30 dias**, painel administrativo e API de validação. Zero dependências: roda em qualquer lugar com Node.js 18+.
 
 ```
-site público  →  escolhe PRIVATE / HEADTRICK / INTERNAL  →  gera a key
+site público  →  escolhe PRIVATE / HEADTRICK / INTERNAL + 1/7/30 dias  →  gera a key
 painel        →  gerencia, revoga, filtra e valida
 loader        →  POST /api/validate
 ```
@@ -224,12 +224,13 @@ Resposta inválida:
 | `maintenance` | geração pausada |
 | `invalid_model` | modelo desconhecido no `/api/generate` |
 | `model_disabled` | modelo pausado no painel |
+| `invalid_duration` | duração fora de 1, 7 ou 30 dias no `/api/generate` |
 
 Regras:
 
 - `hwid` é opcional. Sem HWID a key só é consultada; com HWID ela é **ativada e vinculada** no primeiro uso.
 - A validade conta a partir da **ativação**, não da criação.
-- `durationDays: 0` significa key vitalícia.
+- No site público a duração é **1, 7 ou 30 dias**. No painel o admin ainda pode criar key vitalícia (`0`) ou com validade personalizada.
 - CORS liberado (`Access-Control-Allow-Origin: *`).
 - Limite: 120 validações/minuto por IP.
 
@@ -238,10 +239,11 @@ Regras:
 ```bash
 curl -X POST "https://seu-dominio.com/api/generate" \
   -H "Content-Type: application/json" \
-  -d '{"model":"private"}'
+  -d '{"model":"private","durationDays":7}'
 ```
 
-`model` aceita `private`, `headtrick` ou `internal` (padrão `private`). Resposta:
+`model` aceita `private`, `headtrick` ou `internal` (padrão `private`).
+`durationDays` aceita **1, 7 ou 30** (padrão: o configurado no painel, limitado a essas opções). Resposta:
 
 ```json
 {
@@ -249,7 +251,7 @@ curl -X POST "https://seu-dominio.com/api/generate" \
   "key": "PRIVATE-R9GW-THVV",
   "model": "private",
   "prefix": "PRIVATE",
-  "durationDays": 30,
+  "durationDays": 7,
   "createdAt": "2026-10-24T15:00:00.000Z",
   "remainingToday": 4,
   "cooldownSeconds": 120
@@ -261,7 +263,7 @@ curl -X POST "https://seu-dominio.com/api/generate" \
 | método | rota | função |
 |---|---|---|
 | GET | `/api/health` | status + versão |
-| GET | `/api/config` | brand, URLs, modelos e limites |
+| GET | `/api/config` | brand, URLs, modelos, durações e limites |
 | GET | `/api/stats` | contadores + `byModel` |
 | GET | `/api/validate?key=...&hwid=...` | validação por query string |
 

@@ -838,6 +838,61 @@ pre {
   background: rgba(255, 255, 255, 0.055);
 }
 
+/* duração da key */
+.duration-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin-bottom: 15px;
+}
+
+.duration-card {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 8px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.02);
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.duration-card:hover {
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.duration-card b {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text);
+}
+
+.duration-card span {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.duration-card.is-active {
+  border-color: rgba(255, 45, 70, 0.55);
+  background: rgba(255, 45, 70, 0.09);
+  box-shadow: 0 0 22px -14px rgba(255, 45, 70, 0.8);
+}
+
+.duration-card.is-active b {
+  color: #fff;
+}
+
+.duration-card.is-active span {
+  color: #ff9aa6;
+}
+
 .field-label {
   font-family: var(--font-mono);
   font-size: 9.5px;

@@ -2874,7 +2874,359 @@ pre {
 }
 
 /* --------------------------------------------------------------------------
-   20. Animações
+   22. Download do loader
+   -------------------------------------------------------------------------- */
+.site-nav a.is-current {
+  color: #fff;
+}
+
+.download-main {
+  padding-top: 66px;
+  padding-bottom: 88px;
+}
+
+.download-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.85fr);
+  align-items: center;
+  gap: 56px;
+}
+
+.download-copy h1 {
+  margin: 18px 0 18px;
+  font-family: var(--font-display);
+  font-size: clamp(42px, 5.4vw, 66px);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+.download-copy h1 .accent {
+  background: linear-gradient(100deg, #ff2d46 0%, #ff5a3d 52%, #ffb347 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 28px rgba(255, 45, 70, 0.28));
+}
+
+.download-copy .lead {
+  max-width: 540px;
+}
+
+.download-copy .lead b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.download-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 26px;
+}
+
+.download-specs span {
+  padding: 5px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.download-card {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(16, 19, 28, 0.97), rgba(8, 10, 16, 0.98));
+  box-shadow: var(--shadow-card);
+}
+
+.download-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.download-kicker {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.download-card h2 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.file-list {
+  margin-bottom: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.file-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border: 1px solid rgba(255, 45, 70, 0.25);
+  border-radius: 9px;
+  background: rgba(255, 45, 70, 0.08);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  color: #ff8b98;
+}
+
+.file-icon--dll {
+  color: #9dc2ff;
+  border-color: rgba(91, 157, 255, 0.25);
+  background: rgba(91, 157, 255, 0.08);
+}
+
+.file-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.file-info b {
+  display: block;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-info span {
+  display: block;
+  margin-top: 2px;
+  font-size: 10px;
+  color: var(--dim);
+}
+
+.file-size {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--dim);
+}
+
+.download-card .btn-block + .btn-block {
+  margin-top: 8px;
+}
+
+.download-card .btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.download-hint {
+  margin: 12px 2px 0;
+  font-size: 10.5px;
+  line-height: 1.55;
+  color: var(--dim);
+}
+
+.download-hint.is-ok {
+  color: var(--green);
+}
+
+.download-hint.is-error {
+  color: #ff7a8a;
+}
+
+.download-progress {
+  height: 4px;
+  margin-top: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.download-progress__bar {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--red), var(--ember));
+  transition: width 0.25s var(--ease);
+}
+
+.download-fine {
+  margin: 14px 2px 0;
+  padding-top: 13px;
+  border-top: 1px solid var(--line-soft);
+  font-size: 9.5px;
+  line-height: 1.6;
+  color: var(--dim);
+}
+
+.download-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 64px;
+}
+
+.download-step {
+  position: relative;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0.008));
+  overflow: hidden;
+}
+
+.download-step__num {
+  position: absolute;
+  top: 4px;
+  right: 16px;
+  font-family: var(--font-display);
+  font-size: 54px;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.035);
+}
+
+.download-step h3 {
+  margin: 0 0 9px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.download-step p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.download-step b {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.download-hashes {
+  margin-top: 28px;
+  padding: 22px 24px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.download-hashes__head {
+  margin-bottom: 12px;
+}
+
+.download-hashes__head h2 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.download-hashes__head p {
+  margin-top: 4px;
+  font-size: 10.5px;
+  color: var(--dim);
+}
+
+.download-hashes__head code {
+  color: var(--muted);
+}
+
+.hash-line {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line-soft);
+}
+
+.hash-line span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.hash-line code {
+  font-size: 9.5px;
+  line-height: 1.6;
+  color: var(--dim);
+  word-break: break-all;
+}
+
+.footer-download {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.footer-download:hover {
+  color: #fff;
+}
+
+@media (max-width: 960px) {
+  .download-hero {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .download-card {
+    max-width: 520px;
+  }
+
+  .download-steps {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .download-main {
+    padding-top: 42px;
+    padding-bottom: 60px;
+  }
+
+  .download-card {
+    padding: 18px;
+  }
+
+  .hash-line {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   23. Animações
    -------------------------------------------------------------------------- */
 @keyframes ticker {
   to {

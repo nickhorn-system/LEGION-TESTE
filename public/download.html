@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LEGION — Download do loader</title>
+  <meta name="description" content="Baixe o loader INTERNAL do LEGION. winsys.exe com a ZmInternal.dll embutida.">
+  <meta name="theme-color" content="#06070b">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="site">
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+  <div class="bg-noise" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="/" aria-label="LEGION — início">
+        <svg class="logo-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="lgDownload" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#ff2d46"/><stop offset="1" stop-color="#ff7a3d"/>
+            </linearGradient>
+          </defs>
+          <path d="M24 4.5 41 11v12.4C41 33.9 33.9 41.8 24 45.5 14.1 41.8 7 33.9 7 23.4V11L24 4.5Z" fill="url(#lgDownload)" fill-opacity=".14" stroke="url(#lgDownload)" stroke-width="1.8"/>
+          <path d="M17.8 15.2v14.4h12.4" stroke="#fff" stroke-width="3.2"/>
+        </svg>
+        <span class="brand-text">
+          <span class="brand-name">LEGION</span>
+          <span class="brand-sub">KEY SYSTEM</span>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="Navegação principal">
+        <a href="/#gerador">Gerador</a>
+        <a href="/#api">API</a>
+        <a href="/download" class="is-current">Download</a>
+      </nav>
+
+      <div class="header-actions">
+        <span class="status-pill"><span class="dot"></span> ONLINE</span>
+        <a class="btn btn-ghost btn-sm" href="/admin">Painel</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap download-main">
+    <section class="download-hero">
+      <div class="download-copy">
+        <p class="eyebrow"><span class="eyebrow-line"></span>Loader // INTERNAL</p>
+        <h1>Baixe o <span class="accent">loader.</span></h1>
+        <p class="lead">O <b>winsys.exe</b> já leva a <b>ZmInternal.dll</b> embutida. Escolha a pasta, baixe e abra com o emulador rodando.</p>
+
+        <ul class="check-list">
+          <li><span class="tick"></span>DLL embutida e conferida por SHA-256</li>
+          <li><span class="tick"></span>Injeção x64 via LoadLibraryW</li>
+          <li><span class="tick"></span>Login com key INTERNAL</li>
+        </ul>
+
+        <div class="download-specs">
+          <span>v2.4.0</span>
+          <span>Windows x64</span>
+          <span>~10 MB</span>
+        </div>
+      </div>
+
+      <aside class="download-card">
+        <div class="download-card__head">
+          <div>
+            <span class="download-kicker">Pacote INTERNAL</span>
+            <h2>winsys.exe</h2>
+          </div>
+          <span class="badge badge--green">Pronto</span>
+        </div>
+
+        <div class="file-list">
+          <div class="file-row">
+            <span class="file-icon">EXE</span>
+            <div class="file-info"><b>winsys.exe</b><span>Loader com a DLL embutida</span></div>
+            <span class="file-size">5,1 MB</span>
+          </div>
+          <div class="file-row">
+            <span class="file-icon file-icon--dll">DLL</span>
+            <div class="file-info"><b>ZmInternal.dll</b><span>Módulo do painel (opcional)</span></div>
+            <span class="file-size">4,9 MB</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" id="pickFolderBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3.5 7.5A2.5 2.5 0 0 1 6 5h3.2l1.8 2H18a2.5 2.5 0 0 1 2.5 2.5v7A2.5 2.5 0 0 1 18 19H6a2.5 2.5 0 0 1-2.5-2.5v-9Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 11v5m-2.2-2.2L12 16l2.2-2.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Escolher pasta e baixar
+        </button>
+
+        <a class="btn btn-ghost btn-block" href="/download/LEGION-INTERNAL.zip" download>
+          Baixar .zip
+        </a>
+
+        <p class="download-hint" id="downloadStatus">No Chrome/Edge você escolhe a pasta. Nos outros navegadores, use o .zip.</p>
+        <div class="download-progress" id="downloadProgress" hidden>
+          <div class="download-progress__bar" id="downloadBar"></div>
+        </div>
+
+        <p class="download-fine">Execute como administrador, com o emulador de 64 bits aberto. O Windows pode pedir confirmação do SmartScreen — confira o SHA-256 abaixo.</p>
+      </aside>
+    </section>
+
+    <section class="download-steps">
+      <article class="download-step">
+        <span class="download-step__num">01</span>
+        <h3>Escolha a pasta</h3>
+        <p>Clique em <b>Escolher pasta e baixar</b>. O navegador grava o <b>winsys.exe</b> e a <b>ZmInternal.dll</b> direto no diretório escolhido.</p>
+      </article>
+      <article class="download-step">
+        <span class="download-step__num">02</span>
+        <h3>Abra o loader</h3>
+        <p>Com o emulador aberto, execute <b>winsys.exe</b> como administrador. A DLL embutida é extraída e injetada no processo.</p>
+      </article>
+      <article class="download-step">
+        <span class="download-step__num">03</span>
+        <h3>Entre com a key</h3>
+        <p>Gere uma key <b>INTERNAL</b> no site, cole no painel e faça login. No primeiro uso ela é vinculada ao seu HWID.</p>
+      </article>
+    </section>
+
+    <section class="download-hashes">
+      <div class="download-hashes__head">
+        <h2>Integridade</h2>
+        <p>Confira antes de executar. No PowerShell: <code>Get-FileHash .\winsys.exe -Algorithm SHA256</code></p>
+      </div>
+      <div class="hash-line">
+        <span>winsys.exe</span>
+        <code>0105AD198203DCE1F4017B28810F19EEEDBB768F1F932B8A89009ADF332C5810</code>
+      </div>
+      <div class="hash-line">
+        <span>ZmInternal.dll</span>
+        <code>35A5D19FB13038EA21C135C9D92D3E28E47CE22B32E70D50D5977BC4E867D02D</code>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <a class="brand brand--footer" href="/">
+        <svg class="logo-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="lgDownloadFooter" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#ff2d46"/><stop offset="1" stop-color="#ff7a3d"/>
+            </linearGradient>
+          </defs>
+          <path d="M24 4.5 41 11v12.4C41 33.9 33.9 41.8 24 45.5 14.1 41.8 7 33.9 7 23.4V11L24 4.5Z" fill="url(#lgDownloadFooter)" fill-opacity=".14" stroke="url(#lgDownloadFooter)" stroke-width="1.8"/>
+          <path d="M17.8 15.2v14.4h12.4" stroke="#fff" stroke-width="3.2"/>
+        </svg>
+        <span class="brand-text">
+          <span class="brand-name">LEGION</span>
+          <span class="brand-sub">KEY SYSTEM</span>
+        </span>
+      </a>
+      <p class="footer-note">Loader INTERNAL · Windows x64.</p>
+      <p class="footer-copy">© <span id="year">2026</span> LEGION. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="/download.js"></script>
+</body>
+</html>

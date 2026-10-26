@@ -75,6 +75,9 @@ const MIME = {
   '.woff2': 'font/woff2',
   '.txt': 'text/plain; charset=utf-8',
   '.map': 'application/json; charset=utf-8',
+  '.exe': 'application/octet-stream',
+  '.dll': 'application/octet-stream',
+  '.zip': 'application/zip',
 };
 
 const CSP = [
@@ -1360,6 +1363,8 @@ async function serveStatic(req, res, url) {
   if (pathname === '/') pathname = '/index.html';
   else if (pathname === '/admin' || pathname === '/admin/' || pathname === '/painel') {
     pathname = '/admin.html';
+  } else if (pathname === '/download' || pathname === '/download/') {
+    pathname = '/download.html';
   } else if (pathname === '/favicon.ico') {
     pathname = '/favicon.svg';
   }
@@ -1380,11 +1385,15 @@ async function serveStatic(req, res, url) {
   const type = MIME[ext] || 'application/octet-stream';
   const isHtml = ext === '.html';
   const revalidate = isHtml || ext === '.js' || ext === '.css';
+  const isDownloadFile = pathname.startsWith('/download/');
 
   res.writeHead(200, {
     'Content-Type': type,
     'Content-Length': data.length,
     'Cache-Control': revalidate ? 'no-cache' : 'public, max-age=3600',
+    'Content-Disposition': isDownloadFile
+      ? `attachment; filename="${path.basename(filePath)}"`
+      : 'inline',
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
     'Referrer-Policy': 'strict-origin-when-cross-origin',

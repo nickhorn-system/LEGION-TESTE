@@ -443,6 +443,7 @@ async function handleValidate(req, res, url) {
   }
 
   if (!body.key) {
+    console.error('[server] validate missing_key — body recebido:', JSON.stringify(body), 'content-type:', req.headers['content-type']);
     return sendJson(res, 400, {
       valid: false,
       code: 'missing_key',

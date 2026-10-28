@@ -24,7 +24,7 @@
       publicUrl: '',
       models: FALLBACK_MODELS,
       durations: [1, 7, 30],
-      cooldownSeconds: 120,
+      cooldownSeconds: 0,
       defaultDurationDays: 30,
       maintenance: false,
       version: '1.0.0',
@@ -244,7 +244,7 @@
   /* ---------------------------------------------------------------- config */
 
   function applyConfig(cfg) {
-    state.cfg = { ...state.cfg, ...cfg };
+    state.cfg = { ...state.cfg, ...cfg, cooldownSeconds: 0 };
     if (!Array.isArray(state.cfg.models) || !state.cfg.models.length) {
       state.cfg.models = FALLBACK_MODELS;
     }
@@ -500,10 +500,6 @@
       toast('Sistema em manutenção. Tente mais tarde.', 'error');
       return;
     }
-    if (state.cooldown.until > Date.now()) {
-      toast(`Aguarde ${mmss(state.cooldown.until - Date.now())} para gerar outra key.`, 'info');
-      return;
-    }
 
     const model = currentModel();
     if (!model || model.enabled === false) {
@@ -553,9 +549,6 @@
         'ok',
       );
       toast(`Key ${generated.label} gerada.`, 'success');
-      if (data.cooldownSeconds > 0) {
-        startCooldown(Date.now() + data.cooldownSeconds * 1000, data.cooldownSeconds);
-      }
       loadStats();
     } catch (err) {
       stopScramble();
@@ -605,7 +598,7 @@
     });
 
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && state.cooldown.until) renderCooldown();
+      if (!document.hidden) renderCooldown();
     });
   }
 
@@ -616,7 +609,6 @@
     showMessage('Escolha o modelo e gere sua key de acesso.', '');
     bind();
     await loadConfig();
-    restoreCooldown();
     loadStats();
     if (els.year) els.year.textContent = String(new Date().getFullYear());
   }

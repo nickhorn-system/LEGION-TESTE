@@ -333,15 +333,6 @@ async function serveStatic(req, res, url) {
 async function handleGenerate(req, res) {
   const ip = clientIp(req);
   const body = await readJsonBody(req).catch(() => ({}));
-  const limit = rateLimit(`generate:${ip}`, 15, 10 * 60 * 1000);
-  if (!limit.allowed) {
-    return sendJson(res, 429, {
-      ok: false,
-      code: 'rate_limited',
-      message: 'Muitas tentativas. Aguarde alguns minutos.',
-      retryAfter: limit.retryAfter,
-    });
-  }
 
   const config = await repository.getConfig();
   const cfg = config.config;
@@ -391,36 +382,7 @@ async function handleGenerate(req, res) {
     durationDays = 30;
   }
 
-  const mine = await repository.getKeysByIpAndSource(ip, 'web');
-  const now = Date.now();
-  const lastCreated = mine.reduce((acc, item) => Math.max(acc, Date.parse(item.createdAt) || 0), 0);
-
-  if (cfg.cooldownSeconds > 0 && lastCreated && now - lastCreated < cfg.cooldownSeconds * 1000) {
-    const retryAfter = Math.max(
-      1,
-      Math.ceil((cfg.cooldownSeconds * 1000 - (now - lastCreated)) / 1000),
-    );
-    return sendJson(res, 429, {
-      ok: false,
-      code: 'cooldown',
-      message: `Aguarde ${retryAfter}s para gerar outra key.`,
-      retryAfter,
-      nextAt: new Date(lastCreated + cfg.cooldownSeconds * 1000).toISOString(),
-    });
-  }
-
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
-  const createdToday = mine.filter((item) => Date.parse(item.createdAt) >= todayStart).length;
-  if (cfg.dailyLimit > 0 && createdToday >= cfg.dailyLimit) {
-    return sendJson(res, 429, {
-      ok: false,
-      code: 'daily_limit',
-      message: 'Limite diario atingido. Volte amanha.',
-      retryAfter: secondsUntilTomorrow(),
-    });
-  }
-
+  // Limites de geracao removidos: sem rate-limit, sem cooldown, sem daily limit.
   const key = await repository.createKey(model.id);
   const item = {
     key,
@@ -442,7 +404,6 @@ async function handleGenerate(req, res) {
   await repository.bumpMetric('generated');
   await repository.addLog('generate', { ip, key, detail: `${model.prefix} · ${durationDays}d` });
 
-  const remainingToday = cfg.dailyLimit > 0 ? Math.max(0, cfg.dailyLimit - createdToday - 1) : null;
   return sendJson(res, 201, {
     ok: true,
     key: item.key,
@@ -450,8 +411,8 @@ async function handleGenerate(req, res) {
     prefix: model.prefix,
     durationDays: item.durationDays,
     createdAt: item.createdAt,
-    remainingToday,
-    cooldownSeconds: cfg.cooldownSeconds,
+    remainingToday: null,
+    cooldownSeconds: 0,
   });
 }
 

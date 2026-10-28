@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LEGION — Painel</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#06070b">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="admin-body">
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+  <div class="bg-noise" aria-hidden="true"></div>
+
+  <!-- LOGIN ----------------------------------------------------------------->
+  <div class="login-wrap" id="loginView">
+    <div class="login-card">
+      <div class="login-brand">
+        <svg class="logo-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="lgLogin" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#ff2d46"/><stop offset="1" stop-color="#ff7a3d"/>
+            </linearGradient>
+          </defs>
+          <path d="M24 4.5 41 11v12.4C41 33.9 33.9 41.8 24 45.5 14.1 41.8 7 33.9 7 23.4V11L24 4.5Z" fill="url(#lgLogin)" fill-opacity=".14" stroke="url(#lgLogin)" stroke-width="1.8"/>
+          <path d="M17.8 15.2v14.4h12.4" stroke="#fff" stroke-width="3.2"/>
+        </svg>
+        <div class="brand-text">
+          <span class="brand-name" data-brand>LEGION</span>
+          <span class="brand-sub">ADMIN CONSOLE</span>
+        </div>
+      </div>
+
+      <h1>Acesso restrito</h1>
+      <p class="login-sub">Informe a senha administrativa para gerenciar o sistema.</p>
+
+      <form id="loginForm" class="login-form" autocomplete="off">
+        <label class="field" for="loginPassword">
+          <span>Senha</span>
+          <div class="input-wrap">
+            <input class="input" id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••••" required>
+            <button class="icon-btn input-eye" id="togglePassword" type="button" aria-label="Mostrar senha">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/></svg>
+            </button>
+          </div>
+        </label>
+        <p class="form-error" id="loginError" hidden></p>
+        <button class="btn btn-primary btn-block" id="loginBtn" type="submit">Entrar no painel</button>
+      </form>
+
+      <div class="login-foot">
+        <a href="/">← Voltar para o site</a>
+        <span>v1.0.0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- APP ------------------------------------------------------------------->
+  <div class="admin-shell" id="appView" hidden>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__head">
+        <a class="brand" href="/admin" aria-label="LEGION — painel">
+          <svg class="logo-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="lgSidebar" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#ff2d46"/><stop offset="1" stop-color="#ff7a3d"/>
+              </linearGradient>
+            </defs>
+            <path d="M24 4.5 41 11v12.4C41 33.9 33.9 41.8 24 45.5 14.1 41.8 7 33.9 7 23.4V11L24 4.5Z" fill="url(#lgSidebar)" fill-opacity=".14" stroke="url(#lgSidebar)" stroke-width="1.8"/>
+            <path d="M17.8 15.2v14.4h12.4" stroke="#fff" stroke-width="3.2"/>
+          </svg>
+          <span class="brand-text">
+            <span class="brand-name" data-brand>LEGION</span>
+            <span class="brand-sub">ADMIN CONSOLE</span>
+          </span>
+        </a>
+        <button class="icon-btn sidebar-close" id="sidebarClose" aria-label="Fechar menu">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <nav class="sidebar__nav" id="navItems" aria-label="Seções do painel">
+        <button class="nav-item is-active" data-view="dashboard" type="button">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6" stroke="currentColor" stroke-width="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6" stroke="currentColor" stroke-width="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6" stroke="currentColor" stroke-width="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span>Visão geral</span>
+        </button>
+        <button class="nav-item" data-view="keys" type="button">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.5 9.5a4.5 4.5 0 1 1-3.2 3.2L4 20v-3h3v-3h3l3.5-3.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="16.5" cy="7.5" r="1.4" fill="currentColor"/></svg>
+          <span>Gerenciar keys</span>
+          <span class="nav-count" id="navKeysCount">0</span>
+        </button>
+        <button class="nav-item" data-view="generate" type="button">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          <span>Gerar keys</span>
+        </button>
+        <button class="nav-item" data-view="validate" type="button">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 20 6.5v5.2c0 4.4-3.3 8-8 9.3-4.7-1.3-8-4.9-8-9.3V6.5L12 3Z" stroke="currentColor" stroke-width="1.5"/><path d="m8.8 12.2 2.2 2.2 4.2-4.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span>Validação</span>
+        </button>
+        <button class="nav-item" data-view="settings" type="button">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.5"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l1.7-1.3-1.9-3.3-2 .8a7.7 7.7 0 0 0-2.6-1.5L14.3 3h-3.9L10 5.2a7.7 7.7 0 0 0-2.6 1.5l-2-.8-1.9 3.3 1.7 1.3a7.6 7.6 0 0 0 0 3l-1.7 1.3 1.9 3.3 2-.8a7.7 7.7 0 0 0 2.6 1.5l.4 2.2h3.9l.4-2.2a7.7 7.7 0 0 0 2.6-1.5l2 .8 1.9-3.3-1.7-1.3Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          <span>Configurações</span>
+        </button>
+        <button class="nav-item" data-view="logs" type="button">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span>Logs</span>
+        </button>
+      </nav>
+
+      <div class="sidebar__foot">
+        <div class="sidebar-status">
+          <span class="dot" id="sidebarDot"></span>
+          <div>
+            <b>API online</b>
+            <span id="sidebarUrl">URL não configurada</span>
+          </div>
+        </div>
+        <button class="nav-item nav-item--danger" id="logoutBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 4h3.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H15M10 8l-4 4 4 4M6 12h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Sair</span>
+        </button>
+        <p class="sidebar-version" data-brand>LEGION</p>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="admin-main">
+      <header class="topbar">
+        <button class="icon-btn mobile-menu" id="menuBtn" aria-label="Abrir menu">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </button>
+        <div class="topbar__title">
+          <h1 id="viewTitle">Visão geral</h1>
+          <p id="viewSub">Status do sistema em tempo real.</p>
+        </div>
+        <div class="topbar__actions">
+          <span class="status-pill" id="urlPill"><span class="dot"></span><span id="urlPillText">URL não configurada</span></span>
+          <div class="avatar">A</div>
+        </div>
+      </header>
+
+      <main class="admin-content">
+        <!-- DASHBOARD -------------------------------------------------------->
+        <section class="view is-active" id="view-dashboard">
+          <div class="stat-grid">
+            <article class="stat-card">
+              <div class="stat-card__top"><span>Total de keys</span>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.5 9.5a4.5 4.5 0 1 1-3.2 3.2L4 20v-3h3v-3h3l3.5-3.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="16.5" cy="7.5" r="1.4" fill="currentColor"/></svg>
+              </div>
+              <div class="stat-card__value" id="statTotal">—</div>
+              <div class="stat-card__foot">no banco de dados</div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-card__top"><span>Ativas</span>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="stat-card__value" id="statActive">—</div>
+              <div class="stat-card__foot" id="statActiveFoot">em uso agora</div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-card__top"><span>Não usadas</span>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.5"/><path d="M12 8v4.5l3 1.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <div class="stat-card__value" id="statUnused">—</div>
+              <div class="stat-card__foot">aguardando ativação</div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-card__top"><span>Geradas hoje</span>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v18M5 10l7-7 7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="stat-card__value" id="statToday">—</div>
+              <div class="stat-card__foot" id="statTodayFoot">desde 00:00</div>
+            </article>
+          </div>
+
+          <div class="model-summary" id="modelSummary"></div>
+
+          <div class="grid-2">
+            <article class="panel">
+              <header class="panel__head">
+                <div><h2>Gerações — 7 dias</h2><p>Keys criadas por dia</p></div>
+                <span class="chip">7D</span>
+              </header>
+              <div class="panel__body"><div class="chart" id="chart"></div></div>
+            </article>
+
+            <article class="panel">
+              <header class="panel__head">
+                <div><h2>Distribuição</h2><p>Status atual das keys</p></div>
+              </header>
+              <div class="panel__body"><div class="breakdown" id="breakdown"></div></div>
+            </article>
+          </div>
+
+          <div class="grid-2">
+            <article class="panel">
+              <header class="panel__head">
+                <div><h2>Atividade recente</h2><p>Últimos eventos do sistema</p></div>
+                <button class="btn btn-ghost btn-xs" data-goto="logs" type="button">Ver tudo</button>
+              </header>
+              <div class="panel__body panel__body--flush">
+                <ul class="activity" id="recentLogs"></ul>
+              </div>
+            </article>
+
+            <article class="panel">
+              <header class="panel__head">
+                <div><h2>Endpoint público</h2><p>Onde o loader valida as keys</p></div>
+                <span class="badge" id="endpointBadge">—</span>
+              </header>
+              <div class="panel__body">
+                <div class="copy-field">
+                  <code id="endpointValue">/api/validate</code>
+                  <button class="icon-btn" data-copy-endpoint type="button" aria-label="Copiar endpoint">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M15 5.5V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h.5" stroke="currentColor" stroke-width="1.6"/></svg>
+                  </button>
+                </div>
+                <p class="hint" id="endpointHint">Configure a URL pública quando o site estiver online.</p>
+                <div class="panel-actions">
+                  <button class="btn btn-ghost btn-sm" data-goto="settings" type="button">Configurar URL</button>
+                  <a class="btn btn-ghost btn-sm" href="/" target="_blank" rel="noopener">Abrir site</a>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- KEYS ------------------------------------------------------------->
+        <section class="view" id="view-keys">
+          <div class="toolbar">
+            <div class="search">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <input id="keysSearch" type="search" placeholder="Buscar key, modelo ou HWID..." autocomplete="off">
+            </div>
+            <select class="select" id="keysStatus" aria-label="Filtrar por status">
+              <option value="all">Todas</option>
+              <option value="unused">Não usadas</option>
+              <option value="active">Ativas</option>
+              <option value="expired">Expiradas</option>
+              <option value="revoked">Revogadas</option>
+            </select>
+            <select class="select" id="keysModel" aria-label="Filtrar por modelo">
+              <option value="all">Todos os modelos</option>
+              <option value="private">PRIVATE</option>
+              <option value="headtrick">HEADTRICK</option>
+              <option value="internal">INTERNAL</option>
+            </select>
+            <button class="btn btn-ghost btn-sm" id="keysRefresh" type="button">Atualizar</button>
+            <div class="toolbar__spacer"></div>
+            <button class="btn btn-ghost btn-sm" id="keysExport" type="button">Exportar CSV</button>
+            <button class="btn btn-primary btn-sm" data-goto="generate" type="button">Gerar keys</button>
+          </div>
+
+          <article class="panel">
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Key</th><th>Status</th><th>Duração</th><th>HWID</th><th>Criada</th><th>Último check</th><th class="th-actions"></th>
+                  </tr>
+                </thead>
+                <tbody id="keysTableBody"></tbody>
+              </table>
+            </div>
+            <div class="table-foot">
+              <span id="keysCount">—</span>
+              <div class="pager" id="keysPager"></div>
+            </div>
+          </article>
+        </section>
+
+        <!-- GENERATE --------------------------------------------------------->
+        <section class="view" id="view-generate">
+          <div class="grid-2 grid-2--start">
+            <article class="panel">
+              <header class="panel__head"><div><h2>Gerar keys</h2><p>Criação manual em lote</p></div></header>
+              <div class="panel__body">
+                <form id="genForm" class="form">
+                  <label class="field"><span>Modelo</span>
+                    <select class="select" id="genModel" aria-label="Modelo das keys">
+                      <option value="private">PRIVATE — licença individual</option>
+                      <option value="headtrick">HEADTRICK — licença de equipe</option>
+                      <option value="internal">INTERNAL — acesso interno</option>
+                    </select>
+                  </label>
+                  <div class="form-grid">
+                    <label class="field"><span>Quantidade</span>
+                      <input class="input" id="genAmount" type="number" min="1" max="100" value="1">
+                      <small>1 a 100 por lote</small>
+                    </label>
+                    <label class="field"><span>Validade (dias)</span>
+                      <input class="input" id="genDays" type="number" min="0" max="3650" value="30">
+                      <small>0 = vitalícia</small>
+                    </label>
+                  </div>
+                  <label class="field"><span>Nota interna</span>
+                    <input class="input" id="genNote" maxlength="120" placeholder="Ex.: lote promoção discord">
+                  </label>
+                  <button class="btn btn-primary" id="genSubmit" type="submit">Gerar agora</button>
+                </form>
+              </div>
+            </article>
+
+            <article class="panel">
+              <header class="panel__head">
+                <div><h2>Resultado</h2><p>Keys criadas nesta sessão</p></div>
+                <button class="btn btn-ghost btn-xs" id="copyAllBtn" type="button" disabled>Copiar todas</button>
+              </header>
+              <div class="panel__body panel__body--flush">
+                <ul class="key-list" id="genResult"><li class="empty">Nenhuma key gerada ainda.</li></ul>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- VALIDATE --------------------------------------------------------->
+        <section class="view" id="view-validate">
+          <div class="grid-2 grid-2--start">
+            <div class="stack">
+              <article class="panel">
+                <header class="panel__head"><div><h2>Endpoint de validação</h2><p>URL que o loader deve chamar</p></div></header>
+                <div class="panel__body">
+                  <div class="copy-field">
+                    <code id="validationUrl">—</code>
+                    <button class="icon-btn" id="copyValidationUrl" type="button" aria-label="Copiar URL">
+                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M15 5.5V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h.5" stroke="currentColor" stroke-width="1.6"/></svg>
+                    </button>
+                  </div>
+                  <p class="hint">Se a URL pública estiver vazia, o endpoint usa o domínio atual.</p>
+                  <div class="method-row"><span class="badge badge--blue">POST</span><span class="mono">/api/validate</span></div>
+                </div>
+              </article>
+
+              <article class="panel">
+                <header class="panel__head"><div><h2>Testar validação</h2><p>Simula a chamada do loader</p></div></header>
+                <div class="panel__body">
+                  <form id="valForm" class="form">
+                    <label class="field"><span>Key</span>
+                      <input class="input mono" id="valKey" placeholder="INTERNAL-X7K9-P2QM" autocomplete="off" required>
+                    </label>
+                    <label class="field"><span>HWID (opcional)</span>
+                      <input class="input mono" id="valHwid" placeholder="ABC123DEF456" autocomplete="off">
+                    </label>
+                    <button class="btn btn-primary" type="submit">Validar agora</button>
+                  </form>
+                  <pre class="result" id="valResult">Aguardando teste...</pre>
+                </div>
+              </article>
+            </div>
+
+            <article class="panel">
+              <header class="panel__head"><div><h2>Integração</h2><p>Copie o exemplo para o seu loader</p></div></header>
+              <div class="panel__body">
+                <div class="tabs" id="codeTabs">
+                  <button class="tab is-active" data-tab="curl" type="button">cURL</button>
+                  <button class="tab" data-tab="js" type="button">JavaScript</button>
+                  <button class="tab" data-tab="cs" type="button">C#</button>
+                  <button class="tab" data-tab="py" type="button">Python</button>
+                </div>
+                <pre class="code-block"><code id="codeSample"></code></pre>
+                <button class="btn btn-ghost btn-sm" id="copyCodeBtn" type="button">Copiar código</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- SETTINGS --------------------------------------------------------->
+        <section class="view" id="view-settings">
+          <form id="settingsForm" class="settings-form">
+            <div class="save-bar">
+              <span id="saveState">Tudo salvo.</span>
+              <button class="btn btn-primary" id="saveSettings" type="submit">Salvar alterações</button>
+            </div>
+
+            <article class="panel">
+              <header class="panel__head">
+                <div><h2>Site &amp; API</h2><p>URLs usadas pelo gerador e pela validação</p></div>
+                <span class="badge" id="settingsUrlBadge">—</span>
+              </header>
+              <div class="panel__body">
+                <label class="field"><span>URL pública do site</span>
+                  <input class="input mono" id="setPublicUrl" placeholder="https://legion.seudominio.com" autocomplete="off" spellcheck="false">
+                  <small>Troque aqui assim que colocar o site online. Sem barra no final.</small>
+                </label>
+                <label class="field"><span>URL base da API (opcional)</span>
+                  <input class="input mono" id="setApiBase" placeholder="https://api.seudominio.com" autocomplete="off" spellcheck="false">
+                  <small>Use apenas se a API rodar em outro domínio.</small>
+                </label>
+                <div class="inline-actions">
+                  <button class="btn btn-ghost btn-sm" id="testUrlBtn" type="button">Testar conexão</button>
+                  <span class="test-result" id="urlTestResult"></span>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <header class="panel__head"><div><h2>Keygen</h2><p>Regras de geração automática · formato PREFIX-XXXX-XXXX</p></div></header>
+              <div class="panel__body form-grid">
+                <label class="field"><span>Cooldown (segundos)</span>
+                  <input class="input" id="setCooldown" type="number" min="0" max="86400">
+                  <small>0 = sem espera</small>
+                </label>
+                <label class="field"><span>Limite diário por IP</span>
+                  <input class="input" id="setDailyLimit" type="number" min="0" max="1000">
+                  <small>0 = ilimitado</small>
+                </label>
+                <label class="field"><span>Validade padrão (dias)</span>
+                  <input class="input" id="setDuration" type="number" min="0" max="3650">
+                  <small>0 = vitalícia</small>
+                </label>
+              </div>
+            </article>
+
+            <article class="panel">
+              <header class="panel__head"><div><h2>Modelos</h2><p>Ative ou pause cada gerador</p></div></header>
+              <div class="panel__body">
+                <div class="model-settings">
+                  <label class="switch-row model-switch">
+                    <div><b><span class="model-pill model-pill--private">PRIVATE</span></b><span>PRIVATE-XXXX-XXXX · licença individual</span></div>
+                    <input type="checkbox" class="switch-input" id="modelPrivate" checked>
+                    <span class="switch" aria-hidden="true"></span>
+                  </label>
+                  <label class="switch-row model-switch">
+                    <div><b><span class="model-pill model-pill--headtrick">HEADTRICK</span></b><span>HEADTRICK-XXXX-XXXX · licença de equipe</span></div>
+                    <input type="checkbox" class="switch-input" id="modelHeadtrick" checked>
+                    <span class="switch" aria-hidden="true"></span>
+                  </label>
+                  <label class="switch-row model-switch">
+                    <div><b><span class="model-pill model-pill--internal">INTERNAL</span></b><span>INTERNAL-XXXX-XXXX · acesso interno</span></div>
+                    <input type="checkbox" class="switch-input" id="modelInternal" checked>
+                    <span class="switch" aria-hidden="true"></span>
+                  </label>
+                </div>
+                <p class="hint">Keys já geradas continuam válidas mesmo com o modelo pausado.</p>
+              </div>
+            </article>
+
+            <article class="panel">
+              <header class="panel__head"><div><h2>Operação</h2><p>Comportamento do site público</p></div></header>
+              <div class="panel__body">
+                <label class="switch-row">
+                  <div><b>Modo manutenção</b><span>Pausa a geração de keys no site.</span></div>
+                  <input type="checkbox" id="setMaintenance" class="switch-input">
+                  <span class="switch" aria-hidden="true"></span>
+                </label>
+              </div>
+            </article>
+          </form>
+
+          <article class="panel password-panel">
+            <header class="panel__head"><div><h2>Segurança</h2><p>Altere a senha do painel</p></div></header>
+            <div class="panel__body">
+              <form id="passwordForm" class="form">
+                <div class="form-grid form-grid--3">
+                  <label class="field"><span>Senha atual</span><input class="input" id="pwCurrent" type="password" autocomplete="current-password"></label>
+                  <label class="field"><span>Nova senha</span><input class="input" id="pwNext" type="password" autocomplete="new-password"><small>mínimo 8 caracteres</small></label>
+                  <label class="field"><span>Confirmar</span><input class="input" id="pwConfirm" type="password" autocomplete="new-password"></label>
+                </div>
+                <button class="btn btn-ghost" type="submit">Atualizar senha</button>
+              </form>
+            </div>
+          </article>
+        </section>
+
+        <!-- LOGS ------------------------------------------------------------->
+        <section class="view" id="view-logs">
+          <div class="toolbar">
+            <select class="select" id="logsFilter" aria-label="Filtrar logs">
+              <option value="all">Todos os eventos</option>
+              <option value="generate">Gerações (site)</option>
+              <option value="admin_generate">Gerações (painel)</option>
+              <option value="validate_ok">Validações OK</option>
+              <option value="validate_fail">Validações falhas</option>
+              <option value="admin_login">Login admin</option>
+              <option value="admin_login_fail">Login inválido</option>
+              <option value="key_revoke">Keys revogadas</option>
+              <option value="key_delete">Keys excluídas</option>
+              <option value="setting_update">Configurações</option>
+            </select>
+            <button class="btn btn-ghost btn-sm" id="logsRefresh" type="button">Atualizar</button>
+            <div class="toolbar__spacer"></div>
+            <span class="hint" id="logsCount"></span>
+          </div>
+
+          <article class="panel">
+            <div class="table-wrap">
+              <table class="table table--logs">
+                <thead><tr><th>Quando</th><th>Evento</th><th>Key</th><th>IP</th><th>Detalhe</th></tr></thead>
+                <tbody id="logsBody"></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL ----------------------------------------------------------------->
+  <div class="modal" id="modal" hidden>
+    <div class="modal__backdrop" data-close></div>
+    <div class="modal__card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">Confirmar</h3>
+      <p id="modalText"></p>
+      <div class="modal__actions">
+        <button class="btn btn-ghost" data-close type="button">Cancelar</button>
+        <button class="btn btn-danger" id="modalConfirm" type="button">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-root" id="toastRoot" aria-live="polite"></div>
+
+  <script src="/admin.js"></script>
+</body>
+</html>

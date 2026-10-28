@@ -24,6 +24,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 
 const repository = require('./lib/repository');
+const { supabase } = require('./lib/supabase');
 const {
   verifyPassword,
   hashPassword,

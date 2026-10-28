@@ -32,6 +32,7 @@ const {
   MODEL_MAP,
   normalizeKey,
   PUBLIC_DURATIONS,
+  VALIDATION_CODES,
 } = require('./lib/util');
 
 const ROOT = __dirname;
@@ -39,7 +40,7 @@ const PUBLIC_DIR = path.join(ROOT, 'public');
 
 const PORT = Number.parseInt(process.env.PORT || '3000', 10);
 const HOST = process.env.HOST || '0.0.0.0';
-const VERSION = '1.0.0';
+const VERSION = '1.1.0';
 const TRUST_PROXY = process.env.TRUST_PROXY === '1';
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
 const MAX_BODY = 64 * 1024;
@@ -382,7 +383,37 @@ async function handleGenerate(req, res) {
     durationDays = 30;
   }
 
-  // Limites de geracao removidos: sem rate-limit, sem cooldown, sem daily limit.
+  // Limites de geracao: respeita cooldown e daily limit do banco (padrao 0 = ilimitado).
+  const mine = await repository.getKeysByIpAndSource(ip, 'web');
+  const now = Date.now();
+  const lastCreated = mine.reduce((acc, item) => Math.max(acc, Date.parse(item.createdAt) || 0), 0);
+
+  if (cfg.cooldownSeconds > 0 && lastCreated && now - lastCreated < cfg.cooldownSeconds * 1000) {
+    const retryAfter = Math.max(
+      1,
+      Math.ceil((cfg.cooldownSeconds * 1000 - (now - lastCreated)) / 1000),
+    );
+    return sendJson(res, 429, {
+      ok: false,
+      code: 'cooldown',
+      message: `Aguarde ${retryAfter}s para gerar outra key.`,
+      retryAfter,
+      nextAt: new Date(lastCreated + cfg.cooldownSeconds * 1000).toISOString(),
+    });
+  }
+
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const createdToday = mine.filter((item) => Date.parse(item.createdAt) >= todayStart).length;
+  if (cfg.dailyLimit > 0 && createdToday >= cfg.dailyLimit) {
+    return sendJson(res, 429, {
+      ok: false,
+      code: 'daily_limit',
+      message: 'Limite diario atingido. Volte amanha.',
+      retryAfter: secondsUntilTomorrow(),
+    });
+  }
+
   const key = await repository.createKey(model.id);
   const item = {
     key,
@@ -404,6 +435,7 @@ async function handleGenerate(req, res) {
   await repository.bumpMetric('generated');
   await repository.addLog('generate', { ip, key, detail: `${model.prefix} · ${durationDays}d` });
 
+  const remainingToday = cfg.dailyLimit > 0 ? Math.max(0, cfg.dailyLimit - createdToday - 1) : null;
   return sendJson(res, 201, {
     ok: true,
     key: item.key,
@@ -411,8 +443,8 @@ async function handleGenerate(req, res) {
     prefix: model.prefix,
     durationDays: item.durationDays,
     createdAt: item.createdAt,
-    remainingToday: null,
-    cooldownSeconds: 0,
+    remainingToday,
+    cooldownSeconds: cfg.cooldownSeconds,
   });
 }
 
@@ -422,45 +454,59 @@ async function handleGenerate(req, res) {
 
 async function handleValidate(req, res, url) {
   const ip = clientIp(req);
+
+  // Rate-limit por IP na validacao publica.
   const limit = rateLimit(`validate:${ip}`, 120, 60 * 1000);
   if (!limit.allowed) {
     return sendJson(res, 429, {
       valid: false,
-      code: 'rate_limited',
+      code: VALIDATION_CODES.RATE_LIMITED,
       message: 'Muitas validacoes. Aguarde um instante.',
       retryAfter: limit.retryAfter,
     });
   }
 
   let body;
+  let requestedModel = null;
+
   if (req.method === 'POST') {
     body = await readJsonBody(req);
+    requestedModel = body.model || null;
   } else {
+    // GET com query string: /api/validate?key=XXX&hwid=YYY
     body = {
       key: url.searchParams.get('key') || '',
       hwid: url.searchParams.get('hwid') || '',
     };
+    requestedModel = url.searchParams.get('model') || null;
   }
 
   if (!body.key) {
-    console.error('[server] validate missing_key — body recebido:', JSON.stringify(body), 'content-type:', req.headers['content-type']);
     return sendJson(res, 400, {
       valid: false,
-      code: 'missing_key',
+      code: VALIDATION_CODES.MISSING_KEY,
       message: 'Informe a key.',
     });
   }
 
+  // Normaliza o modelo se vier com prefixo (ex: "INTERNAL").
+  let modelId = null;
+  if (requestedModel) {
+    const norm = String(requestedModel).trim().toUpperCase();
+    const modelDef = MODELS.find((m) => m.id === norm || m.prefix === norm);
+    if (modelDef) modelId = modelDef.id;
+  }
+
   let result;
   try {
-    result = await repository.validateKey(body.key, body.hwid);
+    result = await repository.validateKey(body.key, body.hwid, modelId);
   } catch (err) {
     console.error('[server] validateKey excecao:', err.message);
     const now = Date.now();
     result = {
       payload: {
         valid: false,
-        code: 'server_error',
+        code: VALIDATION_CODES.SERVER_ERROR,
         message: 'Servidor de licenca indisponivel no momento.',
         key: null,
         model: null,
@@ -633,7 +679,7 @@ async function handleAdmin(req, res, url) {
     const action = String(body.action || '');
     const days = body.days;
     const result = await repository.adminKeyAction(key, action, days);
-    return sendJson(res, 200, { ok: true, key: result.key });
+    return sendJson(res, 200, { ok: true, key: result.key, action: result.action });
   }
 
   if (method === 'GET' && pathname === '/api/admin/export') {
@@ -768,7 +814,7 @@ async function handleAdmin(req, res, url) {
         ok: false,
         status: 0,
         error: err.name === 'AbortError' ? 'timeout' : err.message,
-        message: 'Nao foi possivel alcançar a URL.',
+        message: 'Nao foi possivel alcancar a URL.',
       });
     } finally {
       clearTimeout(timer);
@@ -776,30 +822,6 @@ async function handleAdmin(req, res, url) {
   }
 
   return sendJson(res, 404, { ok: false, error: 'not_found' });
-}
-
-function clampInt(value, min, max, fallback) {
-  const parsed = Number.parseInt(value, 10);
-  if (!Number.isFinite(parsed)) return fallback;
-  return Math.min(max, Math.max(min, parsed));
-}
-
-function normalizeUrl(value) {
-  const raw = String(value || '').trim();
-  if (!raw) return '';
-  let parsed;
-  try {
-    parsed = new URL(raw);
-  } catch {
-    throw httpError(400, 'URL invalida.', { field: 'url' });
-  }
-  if (!/^https?:$/.test(parsed.protocol)) {
-    throw httpError(400, 'A URL precisa comecar com http:// ou https://.', { field: 'url' });
-  }
-  if (parsed.search || parsed.hash) {
-    throw httpError(400, 'Remova query string e hash da URL.', { field: 'url' });
-  }
-  return raw.replace(/\/+$/, '');
 }
 
 /* ------------------------------------------------------------------ *

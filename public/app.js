@@ -9,7 +9,6 @@
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
   const ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
-  const STORAGE_KEY = 'legion.cooldown.v1';
 
   const FALLBACK_MODELS = [
     { id: 'private', prefix: 'PRIVATE', label: 'PRIVATE', color: '#a78bfa', enabled: true },
@@ -27,12 +26,11 @@
       cooldownSeconds: 0,
       defaultDurationDays: 30,
       maintenance: false,
-      version: '1.0.0',
+      version: '1.1.0',
     },
     model: 'private',
     duration: 30,
     busy: false,
-    cooldown: { until: 0, total: 0, timer: null, scramble: null },
   };
 
   const els = {
@@ -95,13 +93,6 @@
     const n = Number(days);
     if (!n) return 'Vitalícia';
     return `${n} ${n === 1 ? 'dia' : 'dias'}`;
-  }
-
-  function mmss(ms) {
-    const total = Math.max(0, Math.ceil(ms / 1000));
-    const minutes = Math.floor(total / 60);
-    const seconds = total % 60;
-    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   }
 
   function models() {
@@ -286,7 +277,6 @@
 
     if (state.cfg.maintenance) {
       if (els.maintenance) els.maintenance.hidden = false;
-      setButtonState('maintenance');
     }
 
     if (els.year) els.year.textContent = String(new Date().getFullYear());
@@ -304,7 +294,6 @@
       /* mantém o config.js */
     }
     applyConfig(cfg);
-    if (!state.cfg.maintenance) setButtonState('idle');
   }
 
   /* ---------------------------------------------------------------- sample */
@@ -314,9 +303,7 @@
     const prefix = escapeHtml(currentModel().prefix);
     const url = escapeHtml(endpoint);
     els.apiSample.innerHTML = [
-      `<span class="tok-cmd">curl</span> <span class="tok-flag">-X POST</span> <span class="tok-url">'${url}'</span> \\`,
-      `  <span class="tok-flag">-H</span> <span class="tok-str">'Content-Type: application/json'</span> \\`,
-      `  <span class="tok-flag">-d</span> <span class="tok-str">'{"key":"${prefix}-X7K9-P2QM","hwid":"SEU-HWID"}'</span>`,
+      `<span class="tok-cmd">curl</span> <span class="tok-flag">-X GET</span> <span class="tok-url">'${url}?key=${prefix}-X7K9-P2QM&hwid=SEU-HWID&model=INTERNAL'</span>`,
     ].join('\n');
   }
 
@@ -378,12 +365,6 @@
       els.generateBtn.classList.add('is-loading');
       return;
     }
-    if (mode === 'cooldown') {
-      els.generateBtn.disabled = true;
-      els.generateBtn.classList.remove('is-loading');
-      els.generateLabel.textContent = 'Aguarde';
-      return;
-    }
     els.generateBtn.disabled = false;
     els.generateBtn.classList.remove('is-loading');
     els.generateLabel.textContent = 'Gerar minha key';
@@ -397,12 +378,10 @@
   }
 
   function startScramble() {
-    stopScramble();
-    const prefix = currentModel().prefix;
     els.keyDisplay.classList.remove('is-empty', 'has-key', 'revealed');
     els.keyText.style.opacity = '0.7';
     state.cooldown.scramble = window.setInterval(() => {
-      els.keyText.textContent = `${prefix}-${randomGroup()}-${randomGroup()}`;
+      els.keyText.textContent = `${currentModel().prefix}-${randomGroup()}-${randomGroup()}`;
     }, 55);
   }
 
@@ -428,68 +407,6 @@
     els.genMsg.classList.remove('is-ok', 'is-error');
     if (type === 'ok') els.genMsg.classList.add('is-ok');
     if (type === 'error') els.genMsg.classList.add('is-error');
-  }
-
-  /* ---------------------------------------------------------------- cooldown */
-
-  function readStoredCooldown() {
-    try {
-      const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-      if (raw && Number(raw.until) > Date.now()) return raw;
-    } catch {
-      /* ignora */
-    }
-    return null;
-  }
-
-  function startCooldown(until, totalSeconds) {
-    const total = Math.max(1, Number(totalSeconds) || Math.ceil((until - Date.now()) / 1000));
-    state.cooldown.until = until;
-    state.cooldown.total = total;
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ until, total }));
-    } catch {
-      /* ignora */
-    }
-    if (els.cooldownWrap) els.cooldownWrap.hidden = false;
-    setButtonState('cooldown');
-    renderCooldown();
-    window.clearInterval(state.cooldown.timer);
-    state.cooldown.timer = window.setInterval(renderCooldown, 500);
-  }
-
-  function clearCooldown() {
-    state.cooldown.until = 0;
-    window.clearInterval(state.cooldown.timer);
-    state.cooldown.timer = null;
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      /* ignora */
-    }
-    if (els.cooldownWrap) els.cooldownWrap.hidden = true;
-    if (!state.cfg.maintenance) setButtonState('idle');
-  }
-
-  function renderCooldown() {
-    const left = state.cooldown.until - Date.now();
-    if (left <= 0) {
-      clearCooldown();
-      return;
-    }
-    const ratio = Math.max(0, Math.min(1, left / (state.cooldown.total * 1000)));
-    if (els.cooldownBar) els.cooldownBar.style.width = `${ratio * 100}%`;
-    if (els.cooldownText) {
-      els.cooldownText.textContent = `Próxima key disponível em ${mmss(left)}`;
-    }
-    if (els.generateLabel && els.generateBtn.disabled) {
-      els.generateLabel.textContent = `Aguarde ${mmss(left)}`;
-    }
-  }
-
-  function restoreCooldown() {
-    const stored = readStoredCooldown();
-    if (stored) startCooldown(stored.until, stored.total);
   }
 
   /* ---------------------------------------------------------------- generate */
@@ -523,20 +440,22 @@
       if (!response.ok || !data.ok) {
         stopScramble();
         placeholderKey();
-        if (data.retryAfter) {
-          startCooldown(Date.now() + data.retryAfter * 1000, data.retryAfter);
-        }
         if (data.code === 'maintenance') {
           state.cfg.maintenance = true;
-          els.maintenance.hidden = false;
-          setButtonState('maintenance');
+          if (els.maintenance) els.maintenance.hidden = false;
         }
         if (data.code === 'model_disabled') {
           const target = models().find((item) => item.id === state.model);
           if (target) target.enabled = false;
           renderModelAvailability();
         }
-        throw new Error(data.message || 'Não foi possível gerar a key agora.');
+        if (data.code === 'cooldown' || data.code === 'daily_limit') {
+          showMessage(data.message || 'Não foi possível gerar a key agora.', 'error');
+          toast(data.message || 'Não foi possível gerar a key agora.', 'error');
+        } else {
+          throw new Error(data.message || 'Não foi possível gerar a key agora.');
+        }
+        return;
       }
 
       const generated = modelById(data.model || state.model);
@@ -558,7 +477,7 @@
       toast(message, 'error');
     } finally {
       state.busy = false;
-      if (state.cooldown.until <= Date.now() && !state.cfg.maintenance) {
+      if (!state.cfg.maintenance) {
         setButtonState('idle');
       }
     }
@@ -594,11 +513,7 @@
 
     els.copyEndpointBtn.addEventListener('click', async () => {
       const ok = await copyText(validationUrl());
-      toast(ok ? 'Endpoint copiado.' : 'Não foi possível copiar.', ok ? 'success' : 'error');
-    });
-
-    document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) renderCooldown();
+      toast(ok ? 'URL copiada.' : 'Não foi possível copiar.', ok ? 'success' : 'error');
     });
   }
 

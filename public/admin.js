@@ -47,7 +47,9 @@
       publicUrl: '',
       apiBase: '',
       defaultDurationDays: 30,
-      cooldownSeconds: 120,
+      cooldownSeconds: 0,
+      dailyLimit: 0,
+      defaultDurationDays: 30,
       maintenance: false,
       models: [],
     },
@@ -659,18 +661,8 @@
     const url = endpointUrl();
     const key = 'INTERNAL-X7K9-P2QM';
     return {
-      curl: `curl -X POST "${url}" \\
-  -H "Content-Type: application/json" \\
-  -d '{"key":"${key}","hwid":"SEU-HWID"}'`,
-      js: `const response = await fetch("${url}", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    key: "${key}",
-    hwid: "SEU-HWID",
-  }),
-});
-
+      curl: `curl -X GET "${url}?key=${key}&hwid=SEU-HWID&model=INTERNAL"`,
+      js: `const response = await fetch("${url}?key=${key}&hwid=SEU-HWID&model=INTERNAL");
 const result = await response.json();
 
 if (result.valid) {
@@ -679,26 +671,17 @@ if (result.valid) {
   console.log("Acesso negado:", result.code);
 }`,
       cs: `using System.Net.Http;
-using System.Text;
-using System.Text.Json;
 
 using var http = new HttpClient();
 
-var payload = JsonSerializer.Serialize(new {
-    key = "${key}",
-    hwid = "SEU-HWID"
-});
-
-var content = new StringContent(payload, Encoding.UTF8, "application/json");
-var response = await http.PostAsync("${url}", content);
+var response = await http.GetAsync("${url}?key=${key}&hwid=SEU-HWID&model=INTERNAL");
 var json = await response.Content.ReadAsStringAsync();
 
 Console.WriteLine(json);`,
       py: `import requests
 
-response = requests.post(
-    "${url}",
-    json={"key": "${key}", "hwid": "SEU-HWID"},
+response = requests.get(
+    "${url}?key=${key}&hwid=SEU-HWID&model=INTERNAL",
     timeout=10,
 )
 
@@ -726,8 +709,8 @@ else:
     if (populate) {
       $('#setPublicUrl').value = settings.publicUrl || '';
       $('#setApiBase').value = settings.apiBase || '';
-      $('#setCooldown').value = String(settings.cooldownSeconds ?? 120);
-      $('#setDailyLimit').value = String(settings.dailyLimit ?? 5);
+      $('#setCooldown').value = String(settings.cooldownSeconds ?? 0);
+      $('#setDailyLimit').value = String(settings.dailyLimit ?? 0);
       $('#setDuration').value = String(settings.defaultDurationDays ?? 30);
       $('#setMaintenance').checked = Boolean(settings.maintenance);
 

@@ -835,12 +835,23 @@ async function handlePublicApi(req, res, url) {
   }
 
   if (req.method === 'GET' && pathname === '/api/health') {
+    let supabaseOk = false;
+    let supabaseError = null;
+    try {
+      const { data, error } = await supabase.from('config').select('id').limit(1);
+      supabaseOk = !error;
+      supabaseError = error ? error.message : null;
+    } catch (e) {
+      supabaseError = e.message;
+    }
     return sendJson(res, 200, {
-      ok: true,
+      ok: supabaseOk,
       service: 'legion',
       version: VERSION,
       uptime: Math.floor(process.uptime()),
       time: nowIso(),
+      supabase: supabaseOk ? 'ok' : 'error',
+      supabaseError: supabaseError || null,
     });
   }
 

@@ -52,7 +52,7 @@ $env:ADMIN_PASSWORD="sua-senha-forte"; node server.js
 ADMIN_PASSWORD="sua-senha-forte" node server.js
 ```
 
-Depois do primeiro boot, `ADMIN_PASSWORD` deixa de ser usada — a senha vive no `data/db.json` (hash scrypt). Troque pelo painel.
+Depois do primeiro boot, `ADMIN_PASSWORD` deixa de ser usada — a senha vive na tabela `config` do Supabase (hash scrypt). Troque pelo painel.
 
 ### Variáveis de ambiente
 
@@ -62,7 +62,8 @@ Depois do primeiro boot, `ADMIN_PASSWORD` deixa de ser usada — a senha vive no
 | `HOST` | `0.0.0.0` | interface de escuta |
 | `ADMIN_PASSWORD` | — | senha inicial (só primeiro boot) |
 | `TRUST_PROXY` | `0` | `1` atrás de Nginx/Cloudflare/Render para ler o IP real |
-| `LEGION_DATA_DIR` | `./data` | pasta do `db.json` (volume persistente em produção) |
+| `SUPABASE_URL` | — | URL do projeto Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` | — | chave privada usada somente pelo servidor |
 
 ---
 
@@ -70,18 +71,18 @@ Depois do primeiro boot, `ADMIN_PASSWORD` deixa de ser usada — a senha vive no
 
 A URL se troca **pelo painel**, sem editar código e sem reiniciar.
 
-1. Suba o servidor (Render, Railway, VPS, Fly.io…). O processo precisa de disco persistente para `data/`.
-2. Abra `https://seu-dominio.com/admin` e entre com a senha.
-3. Vá em **Configurações → Site & API**.
-4. Preencha **URL pública do site** com `https://seu-dominio.com` (sem barra no final).
-5. Clique em **Testar conexão** (o servidor chama `https://seu-dominio.com/api/health`).
-6. **Salvar alterações**.
+1. Rode o schema `supabase-schema.sql` no SQL Editor do Supabase.
+2. Suba o servidor (Render, Railway, VPS, Fly.io…). Os dados ficam no Supabase; não é necessário volume persistente.
+3. Abra `https://seu-dominio.com/admin` e entre com a senha.
+4. Vá em **Configurações → Site & API**.
+5. Preencha **URL pública do site** com `https://seu-dominio.com` (sem barra no final).
+6. Clique em **Testar conexão** e depois em **Salvar alterações**.
 
 A partir daí o endpoint exibido no painel, no site e nos exemplos de integração passa a ser `https://seu-dominio.com/api/validate`.
 
 **URL base da API (opcional):** use só se o front ficar em um domínio diferente da API (ex.: site na Vercel, API na VPS). O valor seria `https://api.seu-dominio.com`.
 
-Config salva em `data/db.json`:
+Config salva na tabela `config` do Supabase:
 
 ```json
 {
@@ -103,9 +104,9 @@ Config salva em `data/db.json`:
 
 ### Render / Railway
 
-- Build: nenhum (`npm install` é opcional).
+- Build: `npm install`.
 - Start: `node server.js`.
-- Disco: volume persistente em `/data` + `LEGION_DATA_DIR=/data`.
+- Configure `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` e `ADMIN_PASSWORD` como variáveis secretas.
 - `TRUST_PROXY=1`.
 - `ADMIN_PASSWORD` apenas no primeiro deploy.
 

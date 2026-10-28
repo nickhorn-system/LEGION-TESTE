@@ -450,7 +450,31 @@ async function handleValidate(req, res, url) {
     });
   }
 
-  const result = await repository.validateKey(body.key, body.hwid);
+  let result;
+  try {
+    result = await repository.validateKey(body.key, body.hwid);
+  } catch (err) {
+    console.error('[server] validateKey excecao:', err.message);
+    const now = Date.now();
+    result = {
+      payload: {
+        valid: false,
+        code: 'server_error',
+        message: 'Servidor de licenca indisponivel no momento.',
+        key: null,
+        model: null,
+        plan: null,
+        durationDays: null,
+        activatedAt: null,
+        expiresAt: null,
+        daysLeft: null,
+        hwidBound: false,
+        checkedAt: new Date(now).toISOString(),
+      },
+      dirty: false,
+    };
+  }
+
   if (result.dirty) {
     if (result.payload.valid) await repository.bumpMetric('validations');
   }

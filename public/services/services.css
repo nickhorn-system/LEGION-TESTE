@@ -1,0 +1,21 @@
+/* css / public/services/services.css / browser runtime / LEGION admin panel */
+.admin-shell { --red:#7c5cff; --red-2:#4dd7ff; --ember:#a78bfa; --green:#55e6aa; --blue:#79b7ff; --gold:#ffd166; }
+.admin-shell .btn-primary { background:linear-gradient(105deg,#7057ee,#36bfe8); box-shadow:0 14px 34px -14px rgba(77,215,255,.55); }
+.admin-shell .btn-primary:hover:not([disabled]) { box-shadow:0 18px 40px -14px rgba(77,215,255,.72); }
+.admin-shell .nav-item.is-active { background:linear-gradient(100deg,rgba(124,92,255,.2),rgba(77,215,255,.06)); border-color:rgba(124,92,255,.32); box-shadow:inset 3px 0 0 #7c5cff,0 10px 24px -22px #4dd7ff; }
+.admin-shell .admin-main { background:radial-gradient(700px 420px at 90% 0%,rgba(77,215,255,.08),transparent 70%),radial-gradient(620px 360px at 15% 35%,rgba(124,92,255,.06),transparent 70%),rgba(6,7,11,.72); }
+.section-heading { display:flex; align-items:end; justify-content:space-between; gap:16px; margin:30px 0 14px; }
+.section-heading h2 { margin-top:4px; font:700 20px var(--font-display); }
+.section-heading p { margin-top:3px; color:var(--muted); font-size:12px; }
+.service-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; margin-bottom:24px; }
+.service-card { min-height:170px; padding:16px; border:1px solid rgba(255,255,255,.08); border-radius:16px; background:linear-gradient(145deg,rgba(18,22,34,.88),rgba(10,13,21,.9)); transition:.2s ease; }
+.service-card:hover { transform:translateY(-3px); border-color:rgba(255,255,255,.18); box-shadow:0 18px 40px -28px rgba(77,215,255,.5); }
+.service-card__top,.service-card__foot { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.service-icon { display:grid; place-items:center; width:34px; height:34px; border-radius:11px; font:700 18px var(--font-display); color:#fff; background:rgba(124,92,255,.2); }
+.service-card--cyan .service-icon { background:rgba(77,215,255,.16); color:#76e4ff; }.service-card--green .service-icon { background:rgba(85,230,170,.15); color:#75f0be; }.service-card--gold .service-icon { background:rgba(255,209,102,.16); color:#ffe08d; }.service-card--rose .service-icon { background:rgba(244,114,182,.16); color:#f9a7d1; }
+.service-card h3 { margin:20px 0 3px; font:700 15px var(--font-display); }.service-card p { min-height:34px; color:var(--muted); font-size:11px; }
+.service-state { display:flex; align-items:center; gap:5px; color:var(--dim); font:700 9px var(--font-mono); text-transform:uppercase; }.service-state i { width:6px; height:6px; border-radius:50%; background:var(--dim); }.service-state.is-online { color:var(--green); }.service-state.is-online i { background:var(--green); box-shadow:0 0 9px var(--green); }.service-state.is-offline { color:#ff7187; }.service-state.is-offline i { background:#ff7187; }
+.service-card__foot { align-items:end; margin-top:17px; padding-top:10px; border-top:1px solid rgba(255,255,255,.07); color:var(--dim); font-size:10px; }.service-card__foot code { color:rgba(255,255,255,.38); font:9px var(--font-mono); }
+@media (max-width:1200px) { .service-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media (max-width:700px) { .service-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .section-heading { align-items:start; flex-direction:column; } }
+@media (max-width:470px) { .service-grid { grid-template-columns:1fr; } }

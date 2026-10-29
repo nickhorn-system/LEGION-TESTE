@@ -13,7 +13,6 @@
     generate: ['Gerar keys', 'Criação manual em lote.'],
     validate: ['Validação', 'Teste e integre o endpoint.'],
     settings: ['Configurações', 'URLs, keygen e segurança.'],
-    logs: ['Logs', 'Histórico de eventos do sistema.'],
   };
 
   const STATUS_META = {
@@ -21,24 +20,6 @@
     active: ['Ativa', 'green'],
     expired: ['Expirada', 'gold'],
     revoked: ['Revogada', 'red'],
-  };
-
-  const LOG_META = {
-    generate: ['Key gerada (site)', 'ok'],
-    admin_generate: ['Keys geradas (painel)', 'admin'],
-    validate_ok: ['Validação OK', 'ok'],
-    validate_fail: ['Validação falhou', 'error'],
-    admin_login: ['Login admin', 'admin'],
-    admin_login_fail: ['Login inválido', 'error'],
-    admin_logout: ['Logout', 'info'],
-    setting_update: ['Configurações atualizadas', 'admin'],
-    key_revoke: ['Key revogada', 'error'],
-    key_restore: ['Key reativada', 'ok'],
-    key_delete: ['Key excluída', 'error'],
-    key_reset: ['HWID liberado', 'admin'],
-    key_extend: ['Validade estendida', 'ok'],
-    password_change: ['Senha alterada', 'admin'],
-    url_check: ['Teste de URL', 'info'],
   };
 
   const state = {
@@ -312,7 +293,6 @@
       $('#validationUrl').textContent = endpointUrl();
       renderCodeSample();
     } else if (view === 'settings') loadSettings(true);
-    else if (view === 'logs') loadLogs();
   }
 
   /* ---------------------------------------------------------------- dashboard */
@@ -338,7 +318,6 @@
       renderModelSummary(stats.byModel || {});
       renderChart(data.chart || []);
       renderBreakdown(stats);
-      renderRecent(data.recent || []);
     } catch (error) {
       if (error.status !== 401) toast(error.message, 'error');
     }
@@ -398,30 +377,6 @@
           <div class="breakdown__head"><span>${label}</span><b>${count} · ${pct}%</b></div>
           <div class="breakdown__track"><div class="breakdown__fill breakdown__fill--${key}" style="width:${pct}%"></div></div>
         </div>`;
-      })
-      .join('');
-  }
-
-  function logMeta(type) {
-    return LOG_META[type] || ['Evento', 'info'];
-  }
-
-  function renderRecent(items) {
-    const root = $('#recentLogs');
-    if (!root) return;
-    if (!items.length) {
-      root.innerHTML = '<li class="table-empty">Nenhum evento registrado ainda.</li>';
-      return;
-    }
-    root.innerHTML = items
-      .map((item) => {
-        const [label, kind] = logMeta(item.type);
-        const icon = kind === 'ok' ? '✓' : kind === 'error' ? '!' : kind === 'admin' ? '→' : '·';
-        return `<li>
-          <span class="activity__icon activity__icon--${kind}">${icon}</span>
-          <span class="activity__text"><b>${escapeHtml(label)}</b><span>${escapeHtml(item.key || item.detail || item.ip || '—')}</span></span>
-          <span class="activity__time">${escapeHtml(relativeTime(item.ts))}</span>
-        </li>`;
       })
       .join('');
   }
@@ -830,38 +785,6 @@ else:
     }
   }
 
-  /* ---------------------------------------------------------------- logs */
-
-  async function loadLogs() {
-    const body = $('#logsBody');
-    body.innerHTML = '<tr><td colspan="5"><div class="table-empty">Carregando...</div></td></tr>';
-    try {
-      const type = $('#logsFilter').value;
-      const data = await apiFetch(`/api/admin/logs?limit=200&type=${encodeURIComponent(type)}`);
-      if (!data.items.length) {
-        body.innerHTML = '<tr><td colspan="5"><div class="table-empty">Nenhum evento encontrado.</div></td></tr>';
-      } else {
-        body.innerHTML = data.items
-          .map((item) => {
-            const [label, kind] = logMeta(item.type);
-            return `<tr>
-              <td><span class="cell-mono">${escapeHtml(formatDate(item.ts))}</span></td>
-              <td><span class="badge badge--${kind === 'ok' ? 'green' : kind === 'error' ? 'red' : kind === 'admin' ? 'gold' : 'blue'}">${escapeHtml(label)}</span></td>
-              <td><span class="cell-mono">${escapeHtml(item.key || '—')}</span></td>
-              <td><span class="cell-mono">${escapeHtml(item.ip || '—')}</span></td>
-              <td><span class="cell-mono">${escapeHtml(item.detail || '—')}</span></td>
-            </tr>`;
-          })
-          .join('');
-      }
-      $('#logsCount').textContent = `${data.items.length} evento(s)`;
-    } catch (error) {
-      if (error.status !== 401) {
-        body.innerHTML = `<tr><td colspan="5"><div class="table-empty">${escapeHtml(error.message)}</div></td></tr>`;
-      }
-    }
-  }
-
   /* ---------------------------------------------------------------- login */
 
   async function login(event) {
@@ -1021,9 +944,6 @@ else:
     $('#settingsForm').addEventListener('submit', saveSettings);
     $('#testUrlBtn').addEventListener('click', testUrl);
     $('#passwordForm').addEventListener('submit', changePassword);
-
-    $('#logsFilter').addEventListener('change', loadLogs);
-    $('#logsRefresh').addEventListener('click', loadLogs);
 
     $('#modalConfirm').addEventListener('click', () => settleModal(true));
     $$('#modal [data-close], #modal .modal__backdrop').forEach((element) => {

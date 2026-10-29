@@ -599,17 +599,15 @@ async function handleAdmin(req, res, url) {
   }
 
   if (method === 'GET' && pathname === '/api/admin/overview') {
-    const [stats, chart, recent, config] = await Promise.all([
+    const [stats, chart, config] = await Promise.all([
       repository.computeStats(),
       repository.chartData(7),
-      repository.getLogs({ limit: 6 }),
       repository.getConfig(),
     ]);
     return sendJson(res, 200, {
       ok: true,
       stats,
       chart,
-      recent,
       config: repository.settingsPayload(config),
     });
   }

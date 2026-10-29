@@ -106,10 +106,6 @@
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.5"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l1.7-1.3-1.9-3.3-2 .8a7.7 7.7 0 0 0-2.6-1.5L14.3 3h-3.9L10 5.2a7.7 7.7 0 0 0-2.6 1.5l-2-.8-1.9 3.3 1.7 1.3a7.6 7.6 0 0 0 0 3l-1.7 1.3 1.9 3.3 2-.8a7.7 7.7 0 0 0 2.6 1.5l.4 2.2h3.9l.4-2.2a7.7 7.7 0 0 0 2.6-1.5l2 .8 1.9-3.3-1.7-1.3Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
           <span>Configurações</span>
         </button>
-        <button class="nav-item" data-view="logs" type="button">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-          <span>Logs</span>
-        </button>
       </nav>
 
       <div class="sidebar__foot">
@@ -198,16 +194,6 @@
           </div>
 
           <div class="grid-2">
-            <article class="panel">
-              <header class="panel__head">
-                <div><h2>Atividade recente</h2><p>Últimos eventos do sistema</p></div>
-                <button class="btn btn-ghost btn-xs" data-goto="logs" type="button">Ver tudo</button>
-              </header>
-              <div class="panel__body panel__body--flush">
-                <ul class="activity" id="recentLogs"></ul>
-              </div>
-            </article>
-
             <article class="panel">
               <header class="panel__head">
                 <div><h2>Endpoint público</h2><p>Onde o loader valida as keys</p></div>
@@ -467,35 +453,6 @@
           </article>
         </section>
 
-        <!-- LOGS ------------------------------------------------------------->
-        <section class="view" id="view-logs">
-          <div class="toolbar">
-            <select class="select" id="logsFilter" aria-label="Filtrar logs">
-              <option value="all">Todos os eventos</option>
-              <option value="generate">Gerações (site)</option>
-              <option value="admin_generate">Gerações (painel)</option>
-              <option value="validate_ok">Validações OK</option>
-              <option value="validate_fail">Validações falhas</option>
-              <option value="admin_login">Login admin</option>
-              <option value="admin_login_fail">Login inválido</option>
-              <option value="key_revoke">Keys revogadas</option>
-              <option value="key_delete">Keys excluídas</option>
-              <option value="setting_update">Configurações</option>
-            </select>
-            <button class="btn btn-ghost btn-sm" id="logsRefresh" type="button">Atualizar</button>
-            <div class="toolbar__spacer"></div>
-            <span class="hint" id="logsCount"></span>
-          </div>
-
-          <article class="panel">
-            <div class="table-wrap">
-              <table class="table table--logs">
-                <thead><tr><th>Quando</th><th>Evento</th><th>Key</th><th>IP</th><th>Detalhe</th></tr></thead>
-                <tbody id="logsBody"></tbody>
-              </table>
-            </div>
-          </article>
-        </section>
       </main>
     </div>
   </div>

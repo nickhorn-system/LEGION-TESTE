@@ -104,7 +104,7 @@
   }
 
   function init() {
-    state.base = localStorage.getItem(storageKey) || '';
+    state.base = localStorage.getItem(storageKey) || 'http://127.0.0.1:1010';
     $('skinApiBase').value = state.base;
     $('skinSaveEndpoint').addEventListener('click', () => { state.base = $('skinApiBase').value.trim(); localStorage.setItem(storageKey, state.base); refresh(); });
     $('skinRefresh').addEventListener('click', refresh);

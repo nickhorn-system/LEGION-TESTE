@@ -83,6 +83,10 @@ const CSP = [
 
 const sessions = new Map(); // token -> expiresAt (ms)
 const buckets = new Map(); // rate-limit key -> { count, reset }
+const PUBLIC_GENERATION_COOLDOWN_SECONDS = 5;
+const PUBLIC_GENERATION_BURST_LIMIT = 15;
+const PUBLIC_GENERATION_BURST_COOLDOWN_SECONDS = 180;
+const generationBursts = new Map(); // IP -> { count, lastCreated, cooldownUntil }
 
 /* ------------------------------------------------------------------ *
  * Utilidades HTTP                                                    *
@@ -384,34 +388,51 @@ async function handleGenerate(req, res) {
     durationDays = 30;
   }
 
-  // Limites de geracao: respeita cooldown e daily limit do banco (padrao 0 = ilimitado).
+  // Geracao publica: 5s entre keys e 3min apos cada lote de 15.
   const mine = await repository.getKeysByIpAndSource(ip, 'web');
   const now = Date.now();
   const lastCreated = mine.reduce((acc, item) => Math.max(acc, Date.parse(item.createdAt) || 0), 0);
+  let burst = generationBursts.get(ip);
+  if (!burst) {
+    const burstWindowStart = now - PUBLIC_GENERATION_BURST_COOLDOWN_SECONDS * 1000;
+    const recentCount = mine.filter((item) => (Date.parse(item.createdAt) || 0) >= burstWindowStart).length;
+    burst = {
+      count: recentCount,
+      lastCreated,
+      cooldownUntil: recentCount >= PUBLIC_GENERATION_BURST_LIMIT
+        ? now + PUBLIC_GENERATION_BURST_COOLDOWN_SECONDS * 1000
+        : 0,
+    };
+    generationBursts.set(ip, burst);
+  }
 
-  if (cfg.cooldownSeconds > 0 && lastCreated && now - lastCreated < cfg.cooldownSeconds * 1000) {
+  if (burst.cooldownUntil && now < burst.cooldownUntil) {
+    const retryAfter = Math.max(1, Math.ceil((burst.cooldownUntil - now) / 1000));
+    return sendJson(res, 429, {
+      ok: false,
+      code: 'cooldown',
+      message: `Lote de ${PUBLIC_GENERATION_BURST_LIMIT} keys concluido. Aguarde ${retryAfter}s.`,
+      retryAfter,
+      nextAt: new Date(burst.cooldownUntil).toISOString(),
+    });
+  }
+
+  if (burst.cooldownUntil && now >= burst.cooldownUntil) {
+    burst.count = 0;
+    burst.cooldownUntil = 0;
+  }
+
+  if (lastCreated && now - lastCreated < PUBLIC_GENERATION_COOLDOWN_SECONDS * 1000) {
     const retryAfter = Math.max(
       1,
-      Math.ceil((cfg.cooldownSeconds * 1000 - (now - lastCreated)) / 1000),
+      Math.ceil((PUBLIC_GENERATION_COOLDOWN_SECONDS * 1000 - (now - lastCreated)) / 1000),
     );
     return sendJson(res, 429, {
       ok: false,
       code: 'cooldown',
       message: `Aguarde ${retryAfter}s para gerar outra key.`,
       retryAfter,
-      nextAt: new Date(lastCreated + cfg.cooldownSeconds * 1000).toISOString(),
-    });
-  }
-
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
-  const createdToday = mine.filter((item) => Date.parse(item.createdAt) >= todayStart).length;
-  if (cfg.dailyLimit > 0 && createdToday >= cfg.dailyLimit) {
-    return sendJson(res, 429, {
-      ok: false,
-      code: 'daily_limit',
-      message: 'Limite diario atingido. Volte amanha.',
-      retryAfter: secondsUntilTomorrow(),
+      nextAt: new Date(lastCreated + PUBLIC_GENERATION_COOLDOWN_SECONDS * 1000).toISOString(),
     });
   }
 
@@ -436,7 +457,12 @@ async function handleGenerate(req, res) {
   await repository.bumpMetric('generated');
   await repository.addLog('generate', { ip, key, detail: `${model.prefix} · ${durationDays}d` });
 
-  const remainingToday = cfg.dailyLimit > 0 ? Math.max(0, cfg.dailyLimit - createdToday - 1) : null;
+  burst.count += 1;
+  burst.lastCreated = now;
+  if (burst.count >= PUBLIC_GENERATION_BURST_LIMIT) {
+    burst.cooldownUntil = now + PUBLIC_GENERATION_BURST_COOLDOWN_SECONDS * 1000;
+  }
+
   return sendJson(res, 201, {
     ok: true,
     key: item.key,
@@ -444,8 +470,10 @@ async function handleGenerate(req, res) {
     prefix: model.prefix,
     durationDays: item.durationDays,
     createdAt: item.createdAt,
-    remainingToday,
-    cooldownSeconds: cfg.cooldownSeconds,
+    remainingToday: null,
+    cooldownSeconds: PUBLIC_GENERATION_COOLDOWN_SECONDS,
+    burstLimit: PUBLIC_GENERATION_BURST_LIMIT,
+    burstCooldownSeconds: PUBLIC_GENERATION_BURST_COOLDOWN_SECONDS,
   });
 }
 

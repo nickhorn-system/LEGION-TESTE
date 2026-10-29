@@ -239,7 +239,7 @@
   /* ---------------------------------------------------------------- config */
 
   function applyConfig(cfg) {
-    state.cfg = { ...state.cfg, ...cfg, cooldownSeconds: 0 };
+    state.cfg = { ...state.cfg, ...cfg, cooldownSeconds: 5, dailyLimit: 0 };
     if (!Array.isArray(state.cfg.models) || !state.cfg.models.length) {
       state.cfg.models = FALLBACK_MODELS;
     }

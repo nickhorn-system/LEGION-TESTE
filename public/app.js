@@ -32,6 +32,9 @@
     model: 'private',
     duration: 30,
     busy: false,
+    cooldown: {
+      scramble: null,
+    },
   };
 
   const els = {

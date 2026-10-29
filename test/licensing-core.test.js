@@ -7,24 +7,40 @@ const { canonicalUtc } = require('../lib/repository');
 const { validateBusinessRules } = require('../lib/util');
 
 const now = Date.parse('2026-10-29T12:00:00.000Z');
-const expires = new Date(now + 24 * 60 * 60 * 1000).toISOString();
+assert.equal(canonicalUtc('2026-10-30T12:00:00.000+00:00'), '2026-10-30T12:00:00.000Z');
+assert.equal(canonicalUtc('2026-10-30T12:00:00.000Z'), '2026-10-30T12:00:00.000Z');
+
+for (const durationDays of [1, 7, 30]) {
+  const durationMs = durationDays * 24 * 60 * 60 * 1000;
+  const record = {
+    key: `INTERNAL-${durationDays}D-TEST`,
+    model: 'internal',
+    plan: 'standard',
+    durationDays,
+    revoked: false,
+    hwid: 'STABLE-HWID-01',
+    activatedAt: '2026-10-29T12:00:00.000Z',
+    expiresAt: new Date(now + durationMs).toISOString(),
+  };
+
+  assert.equal(Date.parse(record.expiresAt) - Date.parse(record.activatedAt), durationMs);
+  assert.equal(validateBusinessRules(record, 'stable-hwid-01', 'internal', now), null);
+  assert.equal(validateBusinessRules(record, 'STABLE-HWID-01', 'internal', now + durationMs - 1), null);
+  assert.equal(validateBusinessRules(record, 'STABLE-HWID-01', 'internal', now + durationMs).payload.code, 'EXPIRED');
+}
+
 const record = {
-  key: 'INTERNAL-ABCD-EFGH',
+  key: 'INTERNAL-HWID-TEST',
   model: 'internal',
   plan: 'standard',
   durationDays: 1,
   revoked: false,
   hwid: 'STABLE-HWID-01',
   activatedAt: '2026-10-29T12:00:00.000Z',
-  expiresAt: expires,
+  expiresAt: '2026-10-30T12:00:00.000Z',
 };
 
-assert.equal(canonicalUtc('2026-10-30T12:00:00.000+00:00'), '2026-10-30T12:00:00.000Z');
-assert.equal(canonicalUtc('2026-10-30T12:00:00.000Z'), '2026-10-30T12:00:00.000Z');
-
-assert.equal(validateBusinessRules(record, 'stable-hwid-01', 'internal', now), null);
 assert.equal(validateBusinessRules(record, 'OTHER-HWID-02', 'internal', now).payload.code, 'HWID_MISMATCH');
 assert.equal(validateBusinessRules(record, 'STABLE-HWID-01', 'private', now).payload.code, 'PRODUCT_MISMATCH');
-assert.equal(validateBusinessRules(record, 'STABLE-HWID-01', 'internal', now + 24 * 60 * 60 * 1000).payload.code, 'EXPIRED');
 
 console.log('licensing-core: timestamps UTC, HWID idempotente, produto e expiracao validados');

@@ -9,6 +9,7 @@
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
   const ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+  const GENERATE_TIMEOUT_MS = 30000;
 
   const FALLBACK_MODELS = [
     { id: 'private', prefix: 'PRIVATE', label: 'PRIVATE', color: '#a78bfa', enabled: true },
@@ -429,12 +430,16 @@
     showMessage(`Gerando key ${model.label}...`, '');
     startScramble();
 
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), GENERATE_TIMEOUT_MS);
     try {
       const response = await fetch(apiUrl('/api/generate'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ source: 'web', model: state.model, durationDays: state.duration }),
+        signal: controller.signal,
       });
+      window.clearTimeout(timeout);
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok || !data.ok) {
@@ -470,12 +475,16 @@
       toast(`Key ${generated.label} gerada.`, 'success');
       loadStats();
     } catch (err) {
+      window.clearTimeout(timeout);
       stopScramble();
       if (!els.keyDisplay.classList.contains('has-key')) placeholderKey();
-      const message = err instanceof Error ? err.message : 'Erro inesperado.';
+      const message = err && err.name === 'AbortError'
+        ? 'O servidor demorou mais de 30 segundos para responder. Tente novamente.'
+        : err instanceof Error ? err.message : 'Erro inesperado.';
       showMessage(message, 'error');
       toast(message, 'error');
     } finally {
+      window.clearTimeout(timeout);
       state.busy = false;
       if (!state.cfg.maintenance) {
         setButtonState('idle');

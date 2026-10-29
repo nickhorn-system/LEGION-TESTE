@@ -12,6 +12,7 @@
     keys: ['Keys', 'Gerencie, revogue e exporte licenças.'],
     generate: ['Gerar keys', 'Criação manual em lote.'],
     validate: ['Validação', 'Teste e integre o endpoint.'],
+    skins: ['Skin changer', 'Personalize a sessão com o catálogo local.'],
     settings: ['Configurações', 'URLs, keygen e segurança.'],
   };
 
@@ -292,6 +293,8 @@
     else if (view === 'validate') {
       $('#validationUrl').textContent = endpointUrl();
       renderCodeSample();
+    } else if (view === 'skins') {
+      window.LegionSkinPanel?.refresh();
     } else if (view === 'settings') loadSettings(true);
   }
 
@@ -827,6 +830,8 @@ else:
   /* ---------------------------------------------------------------- bind */
 
   function bind() {
+    window.__legionAdminToast = toast;
+    window.LegionSkinPanel?.init();
     $('#loginForm').addEventListener('submit', login);
 
     $('#togglePassword').addEventListener('click', () => {

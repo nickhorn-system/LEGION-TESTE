@@ -11,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/skin/skin.css">
 </head>
 <body class="admin-body">
   <div class="bg-grid" aria-hidden="true"></div>
@@ -101,6 +102,11 @@
         <button class="nav-item" data-view="validate" type="button">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 20 6.5v5.2c0 4.4-3.3 8-8 9.3-4.7-1.3-8-4.9-8-9.3V6.5L12 3Z" stroke="currentColor" stroke-width="1.5"/><path d="m8.8 12.2 2.2 2.2 4.2-4.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           <span>Validação</span>
+        </button>
+        <button class="nav-item nav-item--featured" data-view="skins" type="button">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 4.5h10v15H7z" stroke="currentColor" stroke-width="1.5"/><path d="M9.5 8.5h5M9.5 12h5M9.5 15.5h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M8.5 4.5V3h7v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span>Skin changer</span>
+          <span class="nav-badge">NEW</span>
         </button>
         <button class="nav-item" data-view="settings" type="button">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.5"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l1.7-1.3-1.9-3.3-2 .8a7.7 7.7 0 0 0-2.6-1.5L14.3 3h-3.9L10 5.2a7.7 7.7 0 0 0-2.6 1.5l-2-.8-1.9 3.3 1.7 1.3a7.6 7.6 0 0 0 0 3l-1.7 1.3 1.9 3.3 2-.8a7.7 7.7 0 0 0 2.6 1.5l.4 2.2h3.9l.4-2.2a7.7 7.7 0 0 0 2.6-1.5l2 .8 1.9-3.3-1.7-1.3Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
@@ -355,6 +361,54 @@
           </div>
         </section>
 
+        <!-- SKINS ------------------------------------------------------------>
+        <section class="view" id="view-skins">
+          <div class="skin-hero">
+            <div>
+              <span class="eyebrow">LEGION / CUSTOMIZATION</span>
+              <h2>Skin changer</h2>
+              <p>selecione, aplique e remova visuais diretamente pelo painel.</p>
+            </div>
+            <div class="skin-hero__mark" aria-hidden="true">✦</div>
+          </div>
+
+          <div class="skin-toolbar">
+            <div class="skin-connection">
+              <span class="skin-status-dot" id="skinStatusDot"></span>
+              <div><b id="skinStatusLabel">desconectado</b><span id="skinStatusText">configure o endpoint local</span></div>
+            </div>
+            <label class="skin-endpoint"><span>endpoint local</span><input class="input mono" id="skinApiBase" placeholder="http://127.0.0.1:8080"></label>
+            <button class="btn btn-ghost btn-sm" id="skinSaveEndpoint" type="button">Salvar conexão</button>
+            <button class="btn btn-primary btn-sm" id="skinRefresh" type="button">Atualizar catálogo</button>
+          </div>
+
+          <div class="skin-metrics" id="skinMetrics">
+            <article><span>catálogo</span><strong id="skinMetricCatalog">—</strong><small>itens disponíveis</small></article>
+            <article><span>ativas</span><strong id="skinMetricApplied">—</strong><small>skins aplicadas</small></article>
+            <article><span>modo</span><strong id="skinMetricMode">—</strong><small>status do changer</small></article>
+          </div>
+
+          <div class="skin-layout">
+            <section class="panel skin-catalog-panel">
+              <header class="panel__head skin-panel-head">
+                <div><h2>catálogo de visuais</h2><p>busque por nome ou id e aplique com um clique.</p></div>
+                <span class="chip" id="skinResultCount">0 ITENS</span>
+              </header>
+              <div class="skin-filters">
+                <label class="search skin-search"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><input id="skinSearch" type="search" placeholder="buscar skin ou id..." autocomplete="off"></label>
+                <select class="select" id="skinCategory" aria-label="Categoria"><option value="all">todas as categorias</option><option value="traje">trajes</option><option value="pass">passes</option><option value="famous">famosas</option><option value="piece">peças</option></select>
+              </div>
+              <div class="skin-grid" id="skinGrid"><div class="skin-empty">informe o endpoint local e carregue o catálogo.</div></div>
+            </section>
+
+            <aside class="panel skin-active-panel">
+              <header class="panel__head"><div><h2>aplicadas agora</h2><p>controle rápido da sessão atual.</p></div></header>
+              <div class="skin-active-list" id="skinActiveList"><div class="skin-empty skin-empty--small">nenhuma skin aplicada.</div></div>
+              <div class="skin-active-foot"><button class="btn btn-danger btn-block" id="skinClear" type="button">limpar todas as skins</button><small>as alterações são enviadas para o changer local.</small></div>
+            </aside>
+          </div>
+        </section>
+
         <!-- SETTINGS --------------------------------------------------------->
         <section class="view" id="view-settings">
           <form id="settingsForm" class="settings-form">
@@ -472,6 +526,7 @@
 
   <div class="toast-root" id="toastRoot" aria-live="polite"></div>
 
+  <script src="/skin/skin.js"></script>
   <script src="/admin.js"></script>
 </body>
 </html>

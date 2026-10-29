@@ -29,7 +29,7 @@
       maintenance: false,
       version: '1.1.0',
     },
-    model: 'private',
+    model: 'internal',
     duration: 30,
     busy: false,
     cooldown: {

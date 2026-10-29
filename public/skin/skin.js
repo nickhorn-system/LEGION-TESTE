@@ -50,7 +50,7 @@
       return;
     }
     root.innerHTML = items.map((item) => `<article class="skin-card">
-      <div class="skin-card__visual"><span>✦</span><small>#${esc(item.id)}</small></div>
+      <div class="skin-card__visual"><img src="https://ffitems.devhubx.org/items/${encodeURIComponent(item.id)}" alt="${esc(item.description || `skin ${item.id}`)}" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span hidden>✦</span><small>#${esc(item.id)}</small></div>
       <div class="skin-card__body"><span class="skin-card__category">${esc(item.category || 'skin')}</span><h3>${esc(item.description || 'visual sem nome')}</h3><small>${esc(item.rarity || 'catálogo legion')}</small></div>
       <button class="skin-apply" type="button" data-skin-id="${esc(item.id)}" aria-label="Aplicar ${esc(item.description)}">aplicar</button>
     </article>`).join('');

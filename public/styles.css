@@ -3560,3 +3560,34 @@ pre {
     scroll-behavior: auto !important;
   }
 }
+
+/* painel interno / refresh visual — a tela de login permanece inalterada */
+.admin-shell .sidebar { background: linear-gradient(180deg, rgba(14,17,27,.98), rgba(8,10,16,.98)); border-right-color: rgba(255,255,255,.08); box-shadow: 18px 0 50px -42px rgba(255,45,70,.8); }
+.admin-shell .sidebar__head { padding: 24px 20px 21px; border-bottom-color: rgba(255,255,255,.075); }
+.admin-shell .brand-name { letter-spacing: .13em; }
+.admin-shell .sidebar__nav { gap: 7px; padding: 18px 12px; }
+.admin-shell .nav-item { min-height: 44px; border: 1px solid transparent; border-radius: 12px; color: #9ca4b7; transition: .2s ease; }
+.admin-shell .nav-item:hover { background: rgba(255,255,255,.045); border-color: rgba(255,255,255,.07); color: #fff; transform: translateX(2px); }
+.admin-shell .nav-item.is-active { background: linear-gradient(100deg, rgba(255,45,70,.19), rgba(255,122,61,.06)); border-color: rgba(255,90,61,.22); color: #fff; box-shadow: inset 3px 0 0 #ff4d4d, 0 10px 24px -22px #ff2d46; }
+.admin-shell .admin-main { background: radial-gradient(700px 420px at 90% 0%, rgba(255,45,70,.08), transparent 70%), rgba(6,7,11,.72); }
+.admin-shell .topbar { height: 86px; padding: 0 34px; border-bottom-color: rgba(255,255,255,.075); background: rgba(7,9,15,.62); backdrop-filter: blur(18px); }
+.admin-shell .topbar__title h1 { font-size: 24px; letter-spacing: .01em; }
+.admin-shell .topbar__title p { margin-top: 4px; color: #7e879b; }
+.admin-shell .admin-content { max-width: 1540px; padding: 30px 34px 54px; }
+.admin-shell .panel { background: linear-gradient(145deg, rgba(16,20,31,.88), rgba(10,13,21,.88)); border-radius: 17px; }
+.admin-shell .panel__head { min-height: 70px; padding: 18px 20px; }
+.admin-shell .panel__head h2 { font-size: 15px; }
+.admin-shell .panel__head p { margin-top: 4px; color: #7e879b; }
+.admin-shell .stat-grid { gap: 14px; }
+.admin-shell .stat-card { padding: 19px 20px; border-radius: 17px; background: linear-gradient(145deg, rgba(18,22,34,.92), rgba(11,14,23,.9)); }
+.admin-shell .stat-card__value { margin: 10px 0 4px; font-size: 31px; }
+.admin-shell .toolbar { gap: 10px; }
+.admin-shell .search, .admin-shell .select, .admin-shell .input { border-color: rgba(255,255,255,.1); background: rgba(5,7,12,.7); }
+.admin-shell .search:focus-within, .admin-shell .input:focus, .admin-shell .select:focus { border-color: rgba(255,90,61,.58); box-shadow: 0 0 0 3px rgba(255,45,70,.1); }
+.admin-shell .btn { border-radius: 11px; }
+.admin-shell .table-wrap { border: 1px solid rgba(255,255,255,.06); border-radius: 14px; overflow: hidden; }
+.admin-shell .table thead { background: rgba(255,255,255,.025); }
+.admin-shell .table tbody tr:hover { background: rgba(255,45,70,.055); }
+.admin-shell .save-bar { margin-bottom: 16px; padding: 14px 16px; border: 1px solid rgba(255,255,255,.08); border-radius: 14px; background: rgba(13,17,27,.8); }
+.admin-shell .model-summary__item { border-radius: 11px; border-color: rgba(255,255,255,.08); background: rgba(14,18,28,.66); }
+@media (max-width: 720px) { .admin-shell .topbar { padding: 0 18px; } .admin-shell .admin-content { padding: 20px 16px 38px; } }

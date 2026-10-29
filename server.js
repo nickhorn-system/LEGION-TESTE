@@ -70,7 +70,7 @@ const CSP = [
   "script-src 'self'",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
-  "img-src 'self' data:",
+  "img-src 'self' data: https://ffitems.devhubx.org",
   "connect-src 'self' http: https:",
   "base-uri 'none'",
   "form-action 'self'",
